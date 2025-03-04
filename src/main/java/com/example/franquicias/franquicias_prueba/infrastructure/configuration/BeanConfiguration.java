@@ -1,0 +1,41 @@
+package com.example.franquicias.franquicias_prueba.infrastructure.configuration;
+
+import com.example.franquicias.franquicias_prueba.aplication.IFranchiseRest;
+import com.example.franquicias.franquicias_prueba.aplication.impl.FranchiseRest;
+import com.example.franquicias.franquicias_prueba.domain.ports.in.IFranchiseServicePort;
+import com.example.franquicias.franquicias_prueba.domain.ports.out.IFranchisePersistencePort;
+import com.example.franquicias.franquicias_prueba.domain.useCases.FranchiseUseCase;
+import com.example.franquicias.franquicias_prueba.domain.validationsUseCase.FranchiseValidations;
+import com.example.franquicias.franquicias_prueba.infrastructure.out.adapter.FranchiseAdapter;
+import com.example.franquicias.franquicias_prueba.infrastructure.out.repository.IFranchiseRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@RequiredArgsConstructor
+public class BeanConfiguration {
+
+    private final IFranchiseRepository franchiseRepository;
+
+    @Bean
+    public FranchiseValidations franchiseValidations() {
+        return new FranchiseValidations(franchisePersistencePort());
+    }
+
+    @Bean
+    public IFranchiseServicePort franchiseServicePort() {
+        return new FranchiseUseCase(franchisePersistencePort(), franchiseValidations());
+    }
+
+    @Bean
+    public IFranchisePersistencePort franchisePersistencePort() {
+        return new FranchiseAdapter(franchiseRepository);
+    }
+
+    @Bean
+    public IFranchiseRest franchiseRest() {
+        return new FranchiseRest(franchiseServicePort());
+    }
+}
