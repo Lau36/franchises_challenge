@@ -9,21 +9,15 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table("Product")
-public class ProductEntity {
+@Table("franchise")
+@Builder
+public class FranchiseEntity {
     @Id
     @Column("id")
     private String id;
 
     @Column("name")
     private String name;
-
-    @Column("quantityInStock")
-    private String quantityInStock;
-
-    @Column("branchId")
-    private String branchId;
 }
