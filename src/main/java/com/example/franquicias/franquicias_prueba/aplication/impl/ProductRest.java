@@ -2,6 +2,7 @@ package com.example.franquicias.franquicias_prueba.aplication.impl;
 
 import com.example.franquicias.franquicias_prueba.aplication.IProductRest;
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
+import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.ports.in.IProductServicePort;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,10 @@ public class ProductRest implements IProductRest {
     @Override
     public Mono<ProductStockByFranchise> getAllProductStockByFranchise(Long franchiseId) {
         return productServicePort.getProducst(franchiseId);
+    }
+
+    @Override
+    public Mono<ProductBranch> updateStock(ProductBranch productBranch) {
+        return productServicePort.updateStock(productBranch);
     }
 }

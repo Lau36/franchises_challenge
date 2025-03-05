@@ -5,8 +5,10 @@ import com.example.franquicias.franquicias_prueba.aplication.IProductRest;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExistsException;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundException;
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
+import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.BranchRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductsTopStockResponse;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.execptions.InvalidDataException;
@@ -69,8 +71,6 @@ public class ProductHandler {
                 .then(ServerResponse.ok().build())
                 .onErrorResume(NotFoundException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
-                .onErrorResume(AlreadyExistsException.class, ex ->
-                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
                 .onErrorResume( ex ->
@@ -95,7 +95,28 @@ public class ProductHandler {
                 .flatMap(response -> ServerResponse.ok().bodyValue(response))
                 .onErrorResume(NotFoundException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
-                .onErrorResume(AlreadyExistsException.class, ex ->
+                .onErrorResume(InvalidDataException.class, ex ->
+                        ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
+                .onErrorResume( ex ->
+                        ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(SERVER_ERROR))
+                ;
+    }
+
+    public Mono<ServerResponse> updateStockProduct(ServerRequest serverRequest) {
+        ProductBranch product = new ProductBranch();
+        return serverRequest.bodyToMono(ProductBranchRequest.class)
+                .switchIfEmpty(Mono.error(new InvalidDataException(PRODUCT_INFO_REQUIRED)))
+                .map(productRequest ->
+                        {
+                            product.setProductId(productRequest.getProductId());
+                            product.setBranchId(productRequest.getBranchId());
+                            product.setStock(productRequest.getStock());
+                            return product;
+                        }
+                )
+                .flatMap(productRest::updateStock)
+                .flatMap(response -> ServerResponse.ok().bodyValue(response))
+                .onErrorResume(NotFoundException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))

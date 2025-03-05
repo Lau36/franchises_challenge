@@ -18,6 +18,7 @@ public class ProductRoute {
     public RouterFunction<ServerResponse> productRoutes(ProductHandler productHandler) {
         return RouterFunctions.route(POST(InfraConstans.ADD_PRODUCT_PATH), productHandler::addNewProduct)
                 .andRoute(DELETE(InfraConstans.DELETE_PRODUCT_PATH), productHandler::deleteProduct)
-                .andRoute(GET(InfraConstans.GET_PRODUCTS_STOCK_PATH), productHandler::getProducts);
+                .andRoute(GET(InfraConstans.GET_PRODUCTS_STOCK_PATH), productHandler::getProducts)
+                .andRoute(PUT(InfraConstans.UPDATE_STOCK_PATH), productHandler::updateStockProduct);
     }
 }

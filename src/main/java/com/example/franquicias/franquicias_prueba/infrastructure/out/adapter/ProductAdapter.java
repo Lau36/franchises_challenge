@@ -1,6 +1,7 @@
 package com.example.franquicias.franquicias_prueba.infrastructure.out.adapter;
 
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
+import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IProductPersistencePort;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStock;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
@@ -74,5 +75,41 @@ public class ProductAdapter implements IProductPersistencePort {
                     return Mono.just(productsWithFranchiseId);
                 });
     }
+
+    @Override
+    public Mono<ProductBranch> findProductBranchByIds(Long productId, Long branchId) {
+        ProductBranch newProduct = new ProductBranch();
+        return productBranchRepository.findByProductIdAndBranchId(productId, branchId).flatMap(
+                product -> {
+                    newProduct.setId(product.getId());
+                    newProduct.setBranchId(product.getBranchId());
+                    newProduct.setProductId(product.getProductId());
+                    newProduct.setStock(product.getStock());
+
+                    return Mono.just(newProduct);
+                }
+        );
+    }
+
+    @Override
+    public Mono<ProductBranch> updateProduct(ProductBranch productBranch) {
+        ProductBranchEntity entity = ProductBranchEntity.builder()
+                .id(productBranch.getId())
+                .stock(productBranch.getStock())
+                .productId(productBranch.getProductId())
+                .branchId(productBranch.getBranchId())
+                .build();
+        ProductBranch productBranchUpdated = new ProductBranch();
+        return productBranchRepository.save(entity).map(
+                productSaved -> {
+                    productBranchUpdated.setBranchId(productSaved.getBranchId());
+                    productBranchUpdated.setProductId(productSaved.getProductId());
+                    productBranchUpdated.setStock(productSaved.getStock());
+                    productBranchUpdated.setId(productSaved.getId());
+                    return productBranchUpdated;
+                }
+        );
+    }
+
 
 }
