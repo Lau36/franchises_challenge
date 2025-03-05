@@ -2,12 +2,18 @@ package com.example.franquicias.franquicias_prueba.infrastructure.out.adapter;
 
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IProductPersistencePort;
+import com.example.franquicias.franquicias_prueba.domain.utils.ProductStock;
+import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.execptions.InvalidDataException;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.entity.ProductBranchEntity;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.entity.ProductEntity;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.repository.IProductBranchRepository;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.repository.IProductRespository;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class ProductAdapter implements IProductPersistencePort {
@@ -46,15 +52,27 @@ public class ProductAdapter implements IProductPersistencePort {
         return productRespository.deleteById(productId);
     }
 
-//    public Mono<Void> addAnotherProductToBranch(Long productId, Long branchId, int quantity) {
-//        return productBranchRepository.findByProductIdAndBranchId(productId, branchId)
-//                .flatMap(existingProductBranch -> {
-//                    existingProductBranch.(existingProductBranch.getQuantityInStock() + quantity);
-//                    return productBranchRepository.save(existingProductBranch);
-//                })
-//                .switchIfEmpty(
-//                        // Si no existe, crear un nuevo registro
-//                        productBranchRepository.save(new ProductBranch(productId, branchId, quantity))
-//                );
-//    }
+    @Override
+    public Mono<Void> deleteProductBranchByIds(Long productId, Long branchId) {
+        return productBranchRepository.deleteByProductIdAndBranchId(productId, branchId);
+    }
+
+    @Override
+    public Mono<ProductStockByFranchise> getProductStockByFranchiseId(Long franchiseId) {
+        ProductStockByFranchise productsWithFranchiseId = new ProductStockByFranchise();
+
+        return productRespository.findTopStockedProductsByFranchiseId(franchiseId)
+                .collectList()
+                .flatMap(
+                productList -> {
+                    List<ProductStock> productStockList = productList.stream().map(
+                            dto -> new ProductStock(dto.getName(), dto.getBranchName(), dto.getStock())
+                    ).toList();
+                    productsWithFranchiseId.setFranchiseId(franchiseId);
+                    productsWithFranchiseId.setProducts(productStockList);
+
+                    return Mono.just(productsWithFranchiseId);
+                });
+    }
+
 }

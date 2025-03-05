@@ -88,7 +88,7 @@ public class BeanConfiguration {
 
     @Bean
     public IProductServicePort productServicePort() {
-        return new ProductUseCase(productPersistencePort(), productValidations(), branchValidations());
+        return new ProductUseCase(productPersistencePort(), productValidations(), branchValidations(), franchiseValidations());
     }
 
     @Bean
