@@ -34,4 +34,9 @@ public class BranchAdapter implements IBranchPersistencePort {
                         branchEntity.getFranchiseId()));
     }
 
+    @Override
+    public Mono<Boolean> existsBranchById(Long branchId) {
+        return branchRepository.existsBranchById(branchId);
+    }
+
 }
