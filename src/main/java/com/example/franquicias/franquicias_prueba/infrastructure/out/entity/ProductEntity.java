@@ -9,16 +9,21 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table("product")
-@Builder
+@Table("Product")
 public class ProductEntity {
-
     @Id
     @Column("id")
-    private Long id;
+    private String id;
 
     @Column("name")
     private String name;
+
+    @Column("quantityInStock")
+    private String quantityInStock;
+
+    @Column("branchId")
+    private String branchId;
 }
