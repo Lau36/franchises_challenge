@@ -8,4 +8,5 @@ public interface IBranchPersistencePort {
     Mono<Void> saveFranchise(Branch branch);
     Mono<Boolean> existsFranchise(String branchName);
     Mono<Branch> existsBranch(String branchName);
+    Mono<Boolean> existsBranchById(Long branchId);
 }
