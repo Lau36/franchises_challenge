@@ -24,4 +24,14 @@ public class BranchAdapter implements IBranchPersistencePort {
     public Mono<Boolean> existsFranchise(String branchName) {
         return branchRepository.existsBranchByName(branchName);
     }
+
+    @Override
+    public Mono<Branch> existsBranch(String branchName) {
+        return branchRepository.findBranchByName(branchName)
+                .map(branchEntity -> new Branch(
+                        branchEntity.getId(),
+                        branchEntity.getName(),
+                        branchEntity.getFranchiseId()));
+    }
+
 }

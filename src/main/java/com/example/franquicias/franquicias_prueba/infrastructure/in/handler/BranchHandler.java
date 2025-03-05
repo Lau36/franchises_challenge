@@ -1,6 +1,7 @@
 package com.example.franquicias.franquicias_prueba.infrastructure.in.handler;
 
 import com.example.franquicias.franquicias_prueba.aplication.IBranchRest;
+import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExistsException;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundException;
 import com.example.franquicias.franquicias_prueba.domain.models.Branch;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.BranchRequest;
@@ -26,6 +27,8 @@ public class BranchHandler {
                 .flatMap(branchRest::addBranch)
                 .then(ServerResponse.ok().build())
                 .onErrorResume(NotFoundException.class, ex ->
+                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
