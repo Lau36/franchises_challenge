@@ -1,11 +1,15 @@
 package com.example.franquicias.franquicias_prueba.domain.models;
 
-public class Product {
+public class Branch {
     private Long id;
     private String name;
-    private Long branchId;
-    private Integer stock;
+    private Long franchiseId;
 
+    public Branch(Long id, String name, Long franchiseId) {
+        this.id = id;
+        this.name = name;
+        this.franchiseId = franchiseId;
+    }
 
     public Long getId() {
         return id;
@@ -15,12 +19,8 @@ public class Product {
         return name;
     }
 
-    public Long getBranchId() {
-        return branchId;
-    }
-
-    public Integer getStock() {
-        return stock;
+    public Long getFranchiseId() {
+        return franchiseId;
     }
 
     public void setId(Long id) {
@@ -31,11 +31,7 @@ public class Product {
         this.name = name;
     }
 
-    public void setBranchId(Long branchId) {
-        this.branchId = branchId;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
+    public void setFranchiseId(Long franchiseId) {
+        this.franchiseId = franchiseId;
     }
 }

@@ -11,14 +11,16 @@ import org.springframework.data.relational.core.mapping.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table("product")
+@Table("branch")
 @Builder
-public class ProductEntity {
-
+public class BranchEntity {
     @Id
     @Column("id")
     private Long id;
 
     @Column("name")
     private String name;
+
+    @Column("franchise_id")
+    private Long franchiseId;
 }
