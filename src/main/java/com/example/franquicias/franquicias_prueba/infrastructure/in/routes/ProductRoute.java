@@ -9,13 +9,15 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 
 @Configuration
 public class ProductRoute {
 
     @Bean
     public RouterFunction<ServerResponse> productRoutes(ProductHandler productHandler) {
-        return RouterFunctions.route(POST(InfraConstans.ADD_PRODUCT_PATH), productHandler::addNewProduct);
+        return RouterFunctions.route(POST(InfraConstans.ADD_PRODUCT_PATH), productHandler::addNewProduct)
+                .andRoute(DELETE(InfraConstans.DELETE_PRODUCT_PATH), productHandler::deleteProduct)
+                .andRoute(GET(InfraConstans.GET_PRODUCTS_STOCK_PATH), productHandler::getProducts);
     }
 }
