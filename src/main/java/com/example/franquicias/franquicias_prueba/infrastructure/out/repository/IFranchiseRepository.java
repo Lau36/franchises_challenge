@@ -5,6 +5,7 @@ import com.example.franquicias.franquicias_prueba.infrastructure.out.entity.Fran
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;
 
-public interface IFranchiseRepository extends R2dbcRepository<FranchiseEntity, Integer> {
+public interface IFranchiseRepository extends R2dbcRepository<FranchiseEntity, Long> {
     Mono<Boolean> existsFranchiseByName(String name);
+    Mono<Boolean> existsFranchiseById(Long id);
 }

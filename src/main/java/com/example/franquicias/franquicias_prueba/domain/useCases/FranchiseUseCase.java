@@ -19,7 +19,7 @@ public class FranchiseUseCase implements IFranchiseServicePort {
 
     @Override
     public Mono<Void> saveFranchise(Franchise franchise) {
-        return franchiseValidations.validateFranchiseExists(franchise)
+        return franchiseValidations.validateFranchiseName(franchise)
                 .then(franchisePersistencePort.saveFranchise(franchise));
     }
 }
