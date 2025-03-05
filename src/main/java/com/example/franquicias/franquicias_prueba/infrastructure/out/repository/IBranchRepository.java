@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface IBranchRepository extends R2dbcRepository<BranchEntity, Long> {
     Mono<Boolean> existsBranchByName(String name);
+    Mono<BranchEntity> findBranchByName(String branchName);
 }

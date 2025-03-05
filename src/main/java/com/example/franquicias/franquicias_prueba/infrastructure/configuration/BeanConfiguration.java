@@ -10,6 +10,7 @@ import com.example.franquicias.franquicias_prueba.domain.ports.out.IBranchPersis
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IFranchisePersistencePort;
 import com.example.franquicias.franquicias_prueba.domain.useCases.BranchUseCase;
 import com.example.franquicias.franquicias_prueba.domain.useCases.FranchiseUseCase;
+import com.example.franquicias.franquicias_prueba.domain.validationsUseCase.BranchValidations;
 import com.example.franquicias.franquicias_prueba.domain.validationsUseCase.FranchiseValidations;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.adapter.BranchAdapter;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.adapter.FranchiseAdapter;
@@ -48,8 +49,13 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public BranchValidations branchValidations() {
+        return new BranchValidations(branchPersistencePort());
+    }
+
+    @Bean
     public IBranchServicePort branchServicePort() {
-        return new BranchUseCase(branchPersistencePort(), franchiseValidations());
+        return new BranchUseCase(branchPersistencePort(), franchiseValidations(), branchValidations());
     }
 
     @Bean
