@@ -7,12 +7,14 @@ public class InfraConstans {
     public static final String PRODUCT_ID_REQUIRED = "El id del producto es requerido";
     public static final String BRANCH_ID_REQUIRED = "El id de la sucursal es requerido";
     public static final String FRANCHISE_ID_REQUIRED = "El id de la franquicia es requerido";
+    public static final String NAME_REQUIRED = "El nuevo nombre es requerido";
 
     public static final String PRODUCT_ID = "productId";
     public static final String BRANCH_ID = "branchId";
     public static final String FRANCHISE_ID = "franchiseId";
 
     public static final String ADD_FRANCHISE_PATH = "/api/v1/franquicias/add";
+    public static final String UPDATE_FRANCHISE_PATH = "/api/v1/franquicias/update";
     public static final String ADD_BRANCH_PATH = "/api/v1/branch/add";
     public static final String ADD_PRODUCT_PATH = "/api/v1/product/add";
     public static final String DELETE_PRODUCT_PATH = "/api/v1/product/delete";

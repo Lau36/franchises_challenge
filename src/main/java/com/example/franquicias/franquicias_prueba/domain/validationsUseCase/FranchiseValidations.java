@@ -18,11 +18,11 @@ public class FranchiseValidations {
         this.franchisePersistencePort = franchisePersistencePort;
     }
 
-    public Mono<Void> validateFranchiseName(Franchise franchise) {
+    public Mono<Void> validateFranchiseName(String name) {
 
-        return franchisePersistencePort.existsFranchise(franchise.getName())
+        return franchisePersistencePort.existsFranchise(name)
                 .filter(exists -> !exists)
-                .switchIfEmpty(Mono.error(new AlreadyExistsException(String.format(ALREADY_EXIST_FRANCHISE, franchise.getName()))))
+                .switchIfEmpty(Mono.error(new AlreadyExistsException(String.format(ALREADY_EXIST_FRANCHISE, name))))
                 .then();
     }
 

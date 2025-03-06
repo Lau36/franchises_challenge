@@ -15,6 +15,7 @@ public class FranchiseAdapter implements IFranchisePersistencePort {
     public Mono<Void> saveFranchise(Franchise franchise) {
         FranchiseEntity entity = FranchiseEntity.builder()
                 .name(franchise.getName())
+                .id(franchise.getId())
                 .build();
         return franchiseRepository.save(entity).then();
     }
@@ -28,4 +29,25 @@ public class FranchiseAdapter implements IFranchisePersistencePort {
     public Mono<Boolean> existsFranchiseById(Long id) {
         return franchiseRepository.existsFranchiseById(id);
     }
+
+    @Override
+    public Mono<Franchise> findFranchiseById(Long id) {
+        Franchise franchiseModel = new Franchise();
+        return franchiseRepository.findFranchiseById(id).map(
+                franchiseEntity -> {
+                    franchiseModel.setName(franchiseEntity.getName());
+                    franchiseModel.setId(franchiseEntity.getId());
+                    return franchiseModel;
+                }
+        );
+    }
+
+//    @Override
+//    public Mono<Franchise> updateName(Franchise franchise) {
+//        FranchiseEntity entity = FranchiseEntity.builder()
+//                .name(franchise.getName())
+//                .id(franchise.getId())
+//                .build();
+//        return franchiseRepository.save(entity);
+//    }
 }
