@@ -16,6 +16,7 @@ public class BranchAdapter implements IBranchPersistencePort {
         BranchEntity branchEntity = BranchEntity.builder()
                 .name(branch.getName())
                 .franchiseId(branch.getFranchiseId())
+                .id(branch.getId())
                 .build();
         return branchRepository.save(branchEntity).then();
     }
@@ -27,16 +28,31 @@ public class BranchAdapter implements IBranchPersistencePort {
 
     @Override
     public Mono<Branch> existsBranch(String branchName) {
+        Branch branch = new Branch();
         return branchRepository.findBranchByName(branchName)
-                .map(branchEntity -> new Branch(
-                        branchEntity.getId(),
-                        branchEntity.getName(),
-                        branchEntity.getFranchiseId()));
+                .map(branchEntity -> {
+                    branch.setId(branchEntity.getId());
+                    branch.setName(branchEntity.getName());
+                    branch.setFranchiseId(branchEntity.getFranchiseId());
+                    return branch;
+                });
     }
 
     @Override
     public Mono<Boolean> existsBranchById(Long branchId) {
         return branchRepository.existsBranchById(branchId);
+    }
+
+    @Override
+    public Mono<Branch> findBranchById(Long branchId) {
+        Branch branch = new Branch();
+        return branchRepository.findBranchById(branchId)
+                .map(branchEntity -> {
+                    branch.setId(branchEntity.getId());
+                    branch.setName(branchEntity.getName());
+                    branch.setFranchiseId(branchEntity.getFranchiseId());
+                    return branch;
+                });
     }
 
 }
