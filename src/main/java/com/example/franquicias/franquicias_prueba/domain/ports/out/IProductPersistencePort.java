@@ -14,4 +14,5 @@ public interface IProductPersistencePort {
     Mono<ProductStockByFranchise> getProductStockByFranchiseId(Long franchiseId);
     Mono<ProductBranch> findProductBranchByIds(Long productId, Long branchId);
     Mono<ProductBranch> updateProduct(ProductBranch productBranch);
+
 }
