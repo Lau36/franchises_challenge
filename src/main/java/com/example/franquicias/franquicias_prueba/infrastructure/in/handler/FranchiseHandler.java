@@ -56,7 +56,7 @@ public class FranchiseHandler {
                     );
 
                 })
-                .then(ServerResponse.ok().build())
+                .flatMap(response -> ServerResponse.ok().bodyValue(response))
                 .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(NotFoundException.class, ex ->
