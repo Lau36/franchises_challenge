@@ -17,6 +17,7 @@ public class InfraConstans {
     public static final String ADD_PRODUCT_PATH = "/api/v1/product/add";
     public static final String DELETE_PRODUCT_PATH = "/api/v1/product/delete";
     public static final String GET_PRODUCTS_STOCK_PATH = "/api/v1/product/get";
+    public static final String UPDATE_STOCK_PATH = "/api/v1/product/update/stock";
 
     public static final String SERVER_ERROR = "Ocurrio un error con el servidor";
 

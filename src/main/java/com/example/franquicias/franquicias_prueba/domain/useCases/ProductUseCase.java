@@ -1,6 +1,7 @@
 package com.example.franquicias.franquicias_prueba.domain.useCases;
 
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
+import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.ports.in.IProductServicePort;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IProductPersistencePort;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
@@ -52,6 +53,15 @@ public class ProductUseCase implements IProductServicePort {
     public Mono<ProductStockByFranchise> getProducst(Long franchiseId) {
         return franchiseValidations.validateFranchiseExistsById(franchiseId)
                 .then(productPersistencePort.getProductStockByFranchiseId(franchiseId));
+    }
+
+    @Override
+    public Mono<ProductBranch> updateStock(ProductBranch productBranch) {
+        return productValidations.findProduct(productBranch).
+                flatMap( existingProduct -> {
+                    existingProduct.setStock(productBranch.getStock());
+                    return productPersistencePort.updateProduct(existingProduct);
+                });
     }
 
 

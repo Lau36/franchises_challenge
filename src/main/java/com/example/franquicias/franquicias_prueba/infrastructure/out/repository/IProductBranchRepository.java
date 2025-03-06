@@ -6,5 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface IProductBranchRepository extends R2dbcRepository<ProductBranchEntity, Long> {
     Mono<Void> deleteByProductIdAndBranchId(Long productId, Long branchId);
+    Mono<ProductBranchEntity> findByProductIdAndBranchId(Long productId, Long branchId);
+    Mono<ProductBranchEntity> save(ProductBranchEntity productBranchEntity);
 
 }
