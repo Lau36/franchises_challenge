@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.PATCH;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 
 @Configuration
@@ -15,6 +16,7 @@ public class FranchiseRoute {
 
     @Bean
     public RouterFunction<ServerResponse> franchisesRoutes(FranchiseHandler franchiseHandler) {
-        return RouterFunctions.route(POST(InfraConstans.ADD_FRANCHISE_PATH), franchiseHandler::createFranchise);
+        return RouterFunctions.route(POST(InfraConstans.ADD_FRANCHISE_PATH), franchiseHandler::createFranchise)
+                .andRoute(PATCH(InfraConstans.UPDATE_FRANCHISE_PATH), franchiseHandler::updateFranchise);
     }
 }

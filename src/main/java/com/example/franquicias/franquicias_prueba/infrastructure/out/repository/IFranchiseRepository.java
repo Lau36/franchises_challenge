@@ -8,4 +8,5 @@ import reactor.core.publisher.Mono;
 public interface IFranchiseRepository extends R2dbcRepository<FranchiseEntity, Long> {
     Mono<Boolean> existsFranchiseByName(String name);
     Mono<Boolean> existsFranchiseById(Long id);
+    Mono<FranchiseEntity> findFranchiseById(Long id);
 }

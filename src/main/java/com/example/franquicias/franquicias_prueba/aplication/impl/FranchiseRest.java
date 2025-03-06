@@ -14,4 +14,9 @@ public class FranchiseRest implements IFranchiseRest {
     public Mono<Void> createFranchise(Franchise franchise) {
         return franchiseServicePort.saveFranchise(franchise);
     }
+
+    @Override
+    public Mono<Franchise> updateFranchise(Long id, String name) {
+        return franchiseServicePort.updatFranchiseName(id, name);
+    }
 }
