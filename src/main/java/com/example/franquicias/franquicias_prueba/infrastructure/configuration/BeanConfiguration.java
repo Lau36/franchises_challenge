@@ -79,8 +79,6 @@ public class BeanConfiguration {
         return new BranchRest(branchServicePort());
     }
 
-
-
     @Bean
     public ProductValidations productValidations() {
         return new ProductValidations(productPersistencePort());

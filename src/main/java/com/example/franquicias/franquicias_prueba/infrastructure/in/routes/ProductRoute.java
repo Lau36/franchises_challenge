@@ -1,6 +1,7 @@
 package com.example.franquicias.franquicias_prueba.infrastructure.in.routes;
 
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductsTopStockResponse;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.handler.BranchHandler;
@@ -22,8 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.BRANCH_ID;
-import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.PRODUCT_ID;
+import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.*;
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 
 @Configuration
@@ -74,8 +74,10 @@ public class ProductRoute {
                             operationId = "deleteProduct",
                             summary = "Eliminar un producto",
                             description = "Elimina un producto existente por su ID",
-                            parameters = @Parameter(
-                                    name = PRODUCT_ID, description = "ID del producto a eliminar", required = true),
+                            parameters = {
+                                    @Parameter(name = PRODUCT_ID, description = "ID del producto a eliminar", required = true),
+                                    @Parameter(name = BRANCH_ID, description = "ID de la sucursal", required = true),
+                            },
                             responses = {
                                     @ApiResponse(responseCode = InfraConstans.STATUS_CODE_200,
                                             description = "Producto eliminado exitosamente"
@@ -104,6 +106,9 @@ public class ProductRoute {
                             operationId = "getProducts",
                             summary = "Obtener el stock de productos",
                             description = "Recupera los detalles de stock de los productos disponibles",
+                            parameters = {
+                                    @Parameter(name = FRANCHISE_ID, description = "ID de la franquicia", required = true),
+                            },
                             responses = {
                                     @ApiResponse(responseCode = InfraConstans.STATUS_CODE_200,
                                             content = @Content(
@@ -139,12 +144,8 @@ public class ProductRoute {
                             operationId = "updateStockProduct",
                             summary = "Actualizar el stock del producto",
                             description = "Actualiza el stock de un producto existente",
-                            parameters = {
-                                    @Parameter(name = PRODUCT_ID, description = "ID del producto", required = true),
-                                    @Parameter(name = BRANCH_ID, description = "ID de la sucursal asociada al producto", required = true)
-                            },
                             requestBody = @RequestBody(
-                                    content = @Content(schema = @Schema(implementation = ProductRequest.class))),
+                                    content = @Content(schema = @Schema(implementation = ProductBranchRequest.class))),
                             responses = {
                                     @ApiResponse(responseCode = InfraConstans.STATUS_CODE_200,
                                             content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
@@ -173,6 +174,9 @@ public class ProductRoute {
                             operationId = "updateProductName",
                             summary = "Actualizar el nombre del producto",
                             description = "Actualiza el nombre de un producto existente",
+                            parameters = {
+                                    @Parameter(name = PRODUCT_ID, description = "ID del producto", required = true),
+                            },
                             requestBody = @RequestBody(
                                     content = @Content(schema = @Schema(implementation = NameRequest.class))),
                             responses = {
