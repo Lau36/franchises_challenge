@@ -143,7 +143,7 @@ public class ProductHandlerTest {
         when(productRest.getAllProductStockByFranchise(1L)).thenReturn(Mono.error(new NotFoundException("Franchise not found")));
 
         StepVerifier.create(productHandler.getProducts(request))
-                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CONFLICT))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.NOT_FOUND))
                 .verifyComplete();
     }
 
@@ -215,7 +215,7 @@ public class ProductHandlerTest {
                 .thenReturn(Mono.error(new NotFoundException("Product not found")));
 
         StepVerifier.create(productHandler.updateProductName(mockRequest))
-                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CONFLICT))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.NOT_FOUND))
                 .verifyComplete();
     }
 
