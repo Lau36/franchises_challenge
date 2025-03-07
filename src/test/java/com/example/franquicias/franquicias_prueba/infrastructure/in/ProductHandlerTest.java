@@ -6,8 +6,10 @@ import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundExce
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
 import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.execptions.InvalidDataException;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.handler.ProductHandler;
 import com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,7 +113,7 @@ public class ProductHandlerTest {
     }
 
     @Test
-    public void addNewProduct_ShouldReturnConflict_WhenAlreadyExists() {
+    public void addNewProduct_shouldReturnConflict_whenAlreadyExistsTest() {
         ServerRequest request = MockServerRequest.builder()
                 .method(HttpMethod.POST)
                 .uri(URI.create(ADD_PRODUCT_PATH))
@@ -125,7 +127,7 @@ public class ProductHandlerTest {
     }
 
     @Test
-    public void deleteProduct_ShouldReturnBadRequest_WhenMissingSomeParams() {
+    public void deleteProduct_shouldReturnBadRequest_whenMissingSomeParamsTest() {
         ServerRequest request = mock(ServerRequest.class);
         when(request.queryParam("productId")).thenReturn(Optional.empty());
 
@@ -135,7 +137,7 @@ public class ProductHandlerTest {
     }
 
     @Test
-    public void getProducts_ShouldReturnConflict_WhenFranchiseNotFound() {
+    public void getProducts_shouldReturnConflict_whenFranchiseNotFoundTest() {
         ServerRequest request = mock(ServerRequest.class);
         when(request.queryParam("franchiseId")).thenReturn(Optional.of("1"));
         when(productRest.getAllProductStockByFranchise(1L)).thenReturn(Mono.error(new NotFoundException("Franchise not found")));
@@ -146,7 +148,7 @@ public class ProductHandlerTest {
     }
 
     @Test
-    public void updateStockProduct_ShouldReturnServerError_WhenUnexpectedError() {
+    public void updateStockProduct_shouldReturnServerError_whenUnexpectedErrorTest() {
         ServerRequest request = MockServerRequest.builder()
                 .method(HttpMethod.PUT)
                 .uri(URI.create(UPDATE_STOCK_PATH))
@@ -158,4 +160,80 @@ public class ProductHandlerTest {
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR))
                 .verifyComplete();
     }
+
+    @Test
+    void updateProductName_shouldReturnOk_whenProductUpdatedSuccessfullyTest() {
+        Long productId = 1L;
+        String newName = "Updated Product";
+        ServerRequest mockRequest = mock(ServerRequest.class);
+
+        when(mockRequest.queryParam(PRODUCT_ID)).thenReturn(Optional.of(String.valueOf(productId)));
+
+        NameRequest nameRequest = new NameRequest(newName);
+        when(mockRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.just(nameRequest));
+
+        when(productRest.updateProductName(productId, newName)).thenReturn(Mono.empty());
+
+        StepVerifier.create(productHandler.updateProductName(mockRequest))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.OK))
+                .verifyComplete();
+    }
+
+    @Test
+    void updateProductName_shouldReturnBadRequest_whenProductIdIsMissingTest() {
+
+        ServerRequest mockRequest = mock(ServerRequest.class);
+        when(mockRequest.queryParam(PRODUCT_ID)).thenReturn(Optional.empty());
+
+        StepVerifier.create(productHandler.updateProductName(mockRequest))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.BAD_REQUEST))
+                .verifyComplete();
+    }
+
+    @Test
+    void updateProductName_shouldReturnBadRequest_whenRequestBodyIsEmptyTest() {
+        Long productId = 1L;
+        ServerRequest mockRequest = mock(ServerRequest.class);
+
+        when(mockRequest.queryParam(PRODUCT_ID)).thenReturn(Optional.of(String.valueOf(productId)));
+        when(mockRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.empty());
+
+        StepVerifier.create(productHandler.updateProductName(mockRequest))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.BAD_REQUEST))
+                .verifyComplete();
+    }
+
+    @Test
+    void updateProductName_shouldReturnConflict_whenProductNotFoundTest() {
+        Long productId = 1L;
+        String newName = "Updated Product";
+        ServerRequest mockRequest = mock(ServerRequest.class);
+
+        when(mockRequest.queryParam(PRODUCT_ID)).thenReturn(Optional.of(String.valueOf(productId)));
+        when(mockRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.just(new NameRequest(newName)));
+        when(productRest.updateProductName(productId, newName))
+                .thenReturn(Mono.error(new NotFoundException("Product not found")));
+
+        StepVerifier.create(productHandler.updateProductName(mockRequest))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CONFLICT))
+                .verifyComplete();
+    }
+
+    @Test
+    void updateProductName_ShouldReturnConflict_WhenProductAlreadyExists() {
+
+        Long productId = 1L;
+        String newName = "Updated Product";
+        ServerRequest mockRequest = mock(ServerRequest.class);
+
+        when(mockRequest.queryParam(PRODUCT_ID)).thenReturn(Optional.of(String.valueOf(productId)));
+        when(mockRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.just(new NameRequest(newName)));
+        when(productRest.updateProductName(productId, newName))
+                .thenReturn(Mono.error(new AlreadyExistsException("Product name already exists")));
+
+        StepVerifier.create(productHandler.updateProductName(mockRequest))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CONFLICT))
+                .verifyComplete();
+    }
+
 }

@@ -10,4 +10,5 @@ public interface IProductRest {
     Mono<Void> deleteProduct(Long productId, Long branchId);
     Mono<ProductStockByFranchise> getAllProductStockByFranchise(Long franchiseId);
     Mono<ProductBranch> updateStock(ProductBranch productBranch);
+    Mono<Void> updateProductName(Long id, String name);
 }

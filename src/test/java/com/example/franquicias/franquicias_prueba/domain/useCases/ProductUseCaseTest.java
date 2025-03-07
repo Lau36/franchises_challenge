@@ -126,7 +126,7 @@ public class ProductUseCaseTest {
 
     @Test
     void updateStock_ShouldUpdateProductStock() {
-        when(productValidations.findProduct(productBranch)).thenReturn(Mono.just(productBranch));
+        when(productValidations.findProductBrach(productBranch)).thenReturn(Mono.just(productBranch));
         when(productPersistencePort.updateProduct(productBranch)).thenReturn(Mono.just(productBranch));
         Mono<ProductBranch> result = productUseCase.updateStock(productBranch);
 
@@ -135,7 +135,32 @@ public class ProductUseCaseTest {
                 .verifyComplete();
 
 
-        verify(productValidations, times(1)).findProduct(productBranch);
+        verify(productValidations, times(1)).findProductBrach(productBranch);
         verify(productPersistencePort, times(1)).updateProduct(productBranch);
+    }
+
+    @Test
+    void updateProductName_ShouldUpdateName_WhenProductExistsAndNameIsValid() {
+        Long productId = 1L;
+        String newName = "Updated Product";
+        Product mockProduct = new Product();
+        mockProduct.setId(productId);
+        mockProduct.setName("Old Product");
+
+        when(productValidations.findProduct(productId)).thenReturn(Mono.just(mockProduct));
+
+        when(productValidations.validateProductName(newName)).thenReturn(Mono.empty());
+
+        when(productPersistencePort.addProduct(mockProduct)).thenReturn(Mono.just(mockProduct));
+
+        Mono<Void> result = productUseCase.updateProductName(productId, newName);
+
+        StepVerifier.create(result).verifyComplete();
+
+        assertEquals(newName, mockProduct.getName());
+
+        verify(productValidations, times(1)).findProduct(productId);
+        verify(productValidations, times(1)).validateProductName(newName);
+        verify(productPersistencePort, times(1)).addProduct(mockProduct);
     }
 }

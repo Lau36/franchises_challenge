@@ -5,6 +5,7 @@ import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundExce
 import com.example.franquicias.franquicias_prueba.domain.models.Franchise;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IFranchisePersistencePort;
 import com.example.franquicias.franquicias_prueba.domain.validationsUseCase.FranchiseValidations;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,13 +26,21 @@ public class FranchisesValidationsTest {
     @InjectMocks
     private FranchiseValidations franchiseValidations;
 
+    private Franchise franchise;
+
+    @BeforeEach
+    void setUp() {
+        franchise = new Franchise();
+        franchise.setId(1L);
+        franchise.setName("Franchise 1");
+    }
+
     @Test
     public void validateFranchiseName_shouldReturnOkTest() {
-        Franchise franchise = new Franchise(1L, "Franchise name");
 
         Mockito.when(franchisePersistencePort.existsFranchise(franchise.getName())).thenReturn(Mono.just(false));
 
-        Mono<Void> result = franchiseValidations.validateFranchiseName(franchise);
+        Mono<Void> result = franchiseValidations.validateFranchiseName(franchise.getName());
 
         StepVerifier.create(result).verifyComplete();
 
@@ -40,11 +49,10 @@ public class FranchisesValidationsTest {
 
     @Test
     public void validateFranchiseName_shouldReturnErrorTest() {
-        Franchise franchise = new Franchise(1L, "Franchise name");
 
         Mockito.when(franchisePersistencePort.existsFranchise(franchise.getName())).thenReturn(Mono.just(true));
 
-        Mono<Void> result = franchiseValidations.validateFranchiseName(franchise);
+        Mono<Void> result = franchiseValidations.validateFranchiseName(franchise.getName());
 
         StepVerifier.create(result)
                 .expectError(AlreadyExistsException.class)

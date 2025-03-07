@@ -33,7 +33,10 @@ class BranchUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        branch = new Branch(1L, "Test Branch", 2L);
+        branch = new Branch();
+        branch.setId(1L);
+        branch.setFranchiseId(2L);
+        branch.setName("Test Branch");
     }
 
     @Test

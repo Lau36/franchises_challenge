@@ -32,4 +32,9 @@ public class ProductRest implements IProductRest {
     public Mono<ProductBranch> updateStock(ProductBranch productBranch) {
         return productServicePort.updateStock(productBranch);
     }
+
+    @Override
+    public Mono<Void> updateProductName(Long id, String name) {
+        return productServicePort.updateProductName(id, name);
+    }
 }

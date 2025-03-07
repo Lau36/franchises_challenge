@@ -33,7 +33,10 @@ public class FranchiseAdapterTest {
                 .id(null)
                 .name("Franchise test")
                 .build();
-        franchise = new Franchise(null, "Franchise test");
+
+        franchise = new Franchise();
+        franchise.setId(null);
+        franchise.setName("Franchise test");
     }
     @Test
     public void testAddFranchise() {

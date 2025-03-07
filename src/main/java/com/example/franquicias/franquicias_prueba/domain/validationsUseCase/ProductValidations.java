@@ -7,8 +7,7 @@ import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IProductPersistencePort;
 import reactor.core.publisher.Mono;
 
-import static com.example.franquicias.franquicias_prueba.domain.utils.constans.DomainConstans.ALREADY_EXIST_PRODUCT;
-import static com.example.franquicias.franquicias_prueba.domain.utils.constans.DomainConstans.PRODUCT_NOT_FOUND;
+import static com.example.franquicias.franquicias_prueba.domain.utils.constans.DomainConstans.*;
 
 public class ProductValidations {
 
@@ -25,10 +24,17 @@ public class ProductValidations {
                 .then();
     }
 
-    public Mono<ProductBranch> findProduct(ProductBranch productBranch){
+    public Mono<ProductBranch> findProductBrach(ProductBranch productBranch){
         return productPersistencePort.findProductBranchByIds(productBranch.getProductId(), productBranch.getBranchId())
                 .switchIfEmpty(Mono.error(new NotFoundException(
-                        String.format(PRODUCT_NOT_FOUND, productBranch.getProductId(), productBranch.getBranchId())
+                        String.format(PRODUCT_BRANCH_NOT_FOUND, productBranch.getProductId(), productBranch.getBranchId())
+                )));
+    }
+
+    public Mono<Product> findProduct(Long id){
+        return productPersistencePort.findProductById(id)
+                .switchIfEmpty(Mono.error(new NotFoundException(
+                        String.format(PRODUCT_NOT_FOUND, id)
                 )));
     }
 }

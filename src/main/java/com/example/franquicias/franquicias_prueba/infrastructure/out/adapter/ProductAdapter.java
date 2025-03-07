@@ -5,7 +5,6 @@ import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IProductPersistencePort;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStock;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
-import com.example.franquicias.franquicias_prueba.infrastructure.in.execptions.InvalidDataException;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.entity.ProductBranchEntity;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.entity.ProductEntity;
 import com.example.franquicias.franquicias_prueba.infrastructure.out.repository.IProductBranchRepository;
@@ -14,7 +13,6 @@ import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class ProductAdapter implements IProductPersistencePort {
@@ -25,7 +23,8 @@ public class ProductAdapter implements IProductPersistencePort {
     public Mono<Product> addProduct(Product product) {
         Product newProduct = new Product();
         return productRespository.save(ProductEntity.builder()
-                .name(product.getName())
+                        .name(product.getName())
+                        .id(product.getId())
                 .build()).map(productSaved -> {
                 newProduct.setName(productSaved.getName());
                 newProduct.setId(productSaved.getId());
@@ -107,6 +106,18 @@ public class ProductAdapter implements IProductPersistencePort {
                     productBranchUpdated.setStock(productSaved.getStock());
                     productBranchUpdated.setId(productSaved.getId());
                     return productBranchUpdated;
+                }
+        );
+    }
+
+    @Override
+    public Mono<Product> findProductById(Long productId) {
+        Product product = new Product();
+        return productRespository.findById(productId).map(
+                productEntity -> {
+                    product.setId(productEntity.getId());
+                    product.setName(productEntity.getName());
+                    return product;
                 }
         );
     }
