@@ -2,6 +2,7 @@ package com.example.franquicias.franquicias_prueba.infrastructure.in;
 
 import com.example.franquicias.franquicias_prueba.aplication.IFranchiseRest;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExistsException;
+import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundException;
 import com.example.franquicias.franquicias_prueba.domain.models.Franchise;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.FranchiseRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
@@ -25,8 +26,9 @@ import reactor.test.StepVerifier;
 import java.net.URI;
 import java.util.Optional;
 
-import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.ADD_FRANCHISE_PATH;
-import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.FRANCHISE_ID;
+import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.*;
+import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.BRANCH_ID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -120,6 +122,65 @@ public class FranchiseHandlerTest {
 
         StepVerifier.create(franchiseHandler.updateFranchise(mockRequest))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.OK))
+                .verifyComplete();
+    }
+
+    @Test
+    void updateFranchiseName_Error_NotFoundExceptionTest() {
+        Long franchiseId = 1L;
+        ServerRequest serverRequest = mock(ServerRequest.class);
+        NameRequest nameRequest = new NameRequest("New Franchise Name");
+
+        when(serverRequest.queryParam(FRANCHISE_ID)).thenReturn(Optional.of(String.valueOf(franchiseId)));
+        when(serverRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.just(nameRequest));
+        when(franchiseRest.updateFranchise(anyLong(), anyString())).thenReturn(Mono.error(new NotFoundException("Franchise not found")));
+
+        StepVerifier.create(franchiseHandler.updateFranchise(serverRequest))
+                .consumeNextWith(response ->
+                        assertEquals(HttpStatus.NOT_FOUND, response.statusCode()))
+                .verifyComplete();
+    }
+
+    @Test
+    void updateFranchiseName_Error_AlreadyExistsExceptionTest() {
+        Long franchiseId = 1L;
+        ServerRequest serverRequest = mock(ServerRequest.class);
+        NameRequest nameRequest = new NameRequest("New Franchise Name");
+
+        when(serverRequest.queryParam(FRANCHISE_ID)).thenReturn(Optional.of(String.valueOf(franchiseId)));
+        when(serverRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.just(nameRequest));
+        when(franchiseRest.updateFranchise(anyLong(), anyString())).thenReturn(Mono.error(new AlreadyExistsException("Franchise already exists")));
+
+        StepVerifier.create(franchiseHandler.updateFranchise(serverRequest))
+                .consumeNextWith(response ->
+                        assertEquals(HttpStatus.CONFLICT, response.statusCode()))
+                .verifyComplete();
+    }
+
+    @Test
+    void updateFranchiseName_whenBodyNotProvider_invalidDataExceptionTest() {
+
+        Long franchiseId = 1L;
+        ServerRequest serverRequest = mock(ServerRequest.class);
+
+        when(serverRequest.queryParam(FRANCHISE_ID)).thenReturn(Optional.of(String.valueOf(franchiseId)));
+        when(serverRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.empty());
+
+        StepVerifier.create(franchiseHandler.updateFranchise(serverRequest))
+                .consumeNextWith(response ->
+                        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode()))
+                .verifyComplete();
+    }
+
+    @Test
+    void updateFranchiseName_whenFranchiseIdNotProvider_invalidDataExceptionTest() {
+
+        ServerRequest serverRequest = mock(ServerRequest.class);
+        when(serverRequest.queryParam(FRANCHISE_ID)).thenReturn(Optional.empty());
+
+        StepVerifier.create(franchiseHandler.updateFranchise(serverRequest))
+                .consumeNextWith(response ->
+                        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode()))
                 .verifyComplete();
     }
 
