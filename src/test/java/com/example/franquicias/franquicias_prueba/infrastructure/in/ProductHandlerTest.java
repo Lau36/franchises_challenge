@@ -5,6 +5,7 @@ import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExist
 import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundException;
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
 import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
+import com.example.franquicias.franquicias_prueba.domain.utils.ProductStock;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
@@ -160,6 +161,21 @@ public class ProductHandlerTest {
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR))
                 .verifyComplete();
     }
+
+    @Test
+    void updateStockProduct_Error_NotFoundExceptionTest() {
+        ServerRequest request = MockServerRequest.builder()
+                .method(HttpMethod.PATCH)
+                .uri(URI.create(UPDATE_STOCK_PATH))
+                .body(Mono.just(productBranchRequest));
+
+        when(productRest.updateStock(any(ProductBranch.class))).thenReturn(Mono.error(new NotFoundException("Not found exception")));
+
+        StepVerifier.create(productHandler.updateStockProduct(request))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.NOT_FOUND))
+                .verifyComplete();
+    }
+
 
     @Test
     void updateProductName_shouldReturnOk_whenProductUpdatedSuccessfullyTest() {

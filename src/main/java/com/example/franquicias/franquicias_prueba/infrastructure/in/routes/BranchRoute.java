@@ -19,6 +19,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.BRANCH_ID;
+import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.FRANCHISE_ID;
 import static org.springframework.web.reactive.function.server.RequestPredicates.PATCH;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 
@@ -70,6 +72,9 @@ public class BranchRoute {
                             operationId = "updateBranchName",
                             summary = "Actualizar el nombre de la sucursal",
                             description = "Actualiza el nombre de una sucursal existente",
+                            parameters = {
+                                    @Parameter(name = BRANCH_ID, description = "ID de la sucursal", required = true),
+                            },
                             requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = NameRequest.class))),
                             responses = {
                                     @ApiResponse(responseCode = InfraConstans.STATUS_CODE_200,

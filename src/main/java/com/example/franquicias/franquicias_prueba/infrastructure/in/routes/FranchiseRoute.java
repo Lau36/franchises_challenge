@@ -1,9 +1,11 @@
 package com.example.franquicias.franquicias_prueba.infrastructure.in.routes;
 
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.FranchiseRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.handler.FranchiseHandler;
 import com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -17,6 +19,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.FRANCHISE_ID;
 import static org.springframework.web.reactive.function.server.RequestPredicates.PATCH;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 
@@ -67,7 +70,10 @@ public class FranchiseRoute {
                             operationId = "updateFranchiseName",
                             summary = "Actualizar el nombre de la franquicia",
                             description = "Actualiza el nombre de una franquicia existente",
-                            requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = FranchiseRequest.class))),
+                            parameters = {
+                                    @Parameter(name = FRANCHISE_ID, description = "ID de la franquicia", required = true),
+                            },
+                            requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = NameRequest.class))),
                             responses = {
                                     @ApiResponse(
                                             responseCode = InfraConstans.STATUS_CODE_201,
@@ -83,9 +89,8 @@ public class FranchiseRoute {
                                             description = "Entrada inválida",
                                             content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
                                     ),
-                                    @ApiResponse(
-                                            responseCode = InfraConstans.STATUS_CODE_500,
-                                            description = "Error interno del servidor",
+                                    @ApiResponse(responseCode = InfraConstans.STATUS_CODE_409,
+                                            description = "El nombre de la franquicia ya existe",
                                             content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
                                     )
                             }
