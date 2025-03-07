@@ -34,7 +34,7 @@ public class BranchHandler {
                 .flatMap(branchRest::addBranch)
                 .then(ServerResponse.ok().build())
                 .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
@@ -61,7 +61,7 @@ public class BranchHandler {
                 })
                 .flatMap(name -> ServerResponse.ok().bodyValue(String.format(BRANCH_NAME_UPDATED, name)))
                 .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->

@@ -30,7 +30,20 @@ public class InfraConstans {
     public static final String GET_PRODUCTS_STOCK_PATH = "/api/v1/product/get";
 
 
+    //Swagger constans
+    public static final String STATUS_CODE_201 = "201";
+    public static final String STATUS_CODE_200 = "200";
+    public static final String STATUS_CODE_400 = "400";
+    public static final String STATUS_CODE_404 = "404";
+    public static final String STATUS_CODE_409 = "409";
+    public static final String STATUS_CODE_500 = "500";
+
+    public static final String DATA_NOT_FOUND = "Data not found";
+    public static final String ALREADY_EXISTS_DATA = "Already exists data";
+    public static final String INVALID_INPUT = "Invalid input";
     public static final String SERVER_ERROR = "Ocurrio un error con el servidor";
+    public static final String APPLICATION_JSON = "application/json";
+
 
     public static final String QUERY_TO_GET_MOST_STOCKED_PRODUCTS_BY_FRANCHISE_ID =
            """

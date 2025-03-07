@@ -7,6 +7,8 @@ import com.example.franquicias.franquicias_prueba.domain.models.Franchise;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.FranchiseRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.execptions.InvalidDataException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,7 @@ import static com.example.franquicias.franquicias_prueba.infrastructure.utils.co
 public class FranchiseHandler {
 
     private final IFranchiseRest franchiseRest;
+
 
     public Mono<ServerResponse> createFranchise(ServerRequest serverRequest) {
         Franchise franchise = new Franchise();
@@ -61,7 +64,7 @@ public class FranchiseHandler {
                 .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
+                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
                 ;

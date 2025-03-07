@@ -1,19 +1,15 @@
 package com.example.franquicias.franquicias_prueba.infrastructure.in.handler;
 
-import com.example.franquicias.franquicias_prueba.aplication.IFranchiseRest;
 import com.example.franquicias.franquicias_prueba.aplication.IProductRest;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExistsException;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundException;
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
 import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
-import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
-import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.BranchRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductsTopStockResponse;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.execptions.InvalidDataException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -28,7 +24,6 @@ import static com.example.franquicias.franquicias_prueba.infrastructure.utils.co
 public class ProductHandler {
 
     private final IProductRest productRest;
-    private final IFranchiseRest franchiseRest;
 
     public Mono<ServerResponse> addNewProduct(ServerRequest serverRequest) {
         Product product = new Product();
@@ -46,7 +41,7 @@ public class ProductHandler {
                 .flatMap(productRest::addNewProduct)
                 .then(ServerResponse.status(HttpStatus.CREATED).build())
                 .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
@@ -71,7 +66,7 @@ public class ProductHandler {
                 })
                 .then(ServerResponse.ok().build())
                 .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
                 .onErrorResume( ex ->
@@ -95,7 +90,7 @@ public class ProductHandler {
                 })
                 .flatMap(response -> ServerResponse.ok().bodyValue(response))
                 .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
@@ -120,7 +115,7 @@ public class ProductHandler {
                 .flatMap(productRest::updateStock)
                 .flatMap(response -> ServerResponse.ok().bodyValue(response))
                 .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
                 .onErrorResume( ex ->
@@ -143,7 +138,7 @@ public class ProductHandler {
                 })
                 .flatMap(productName -> ServerResponse.ok().bodyValue(String.format(PRODUCT_NAME_UPDATED,productName)))
                 .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
