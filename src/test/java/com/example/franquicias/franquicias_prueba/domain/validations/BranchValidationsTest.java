@@ -41,7 +41,10 @@ public class BranchValidationsTest {
 
     @Test
     public void validateExistsBranchByName_shoulReturnErrorTest() {
-        Branch branch = new Branch(1L, "Branch name", 2L);
+        Branch branch = new Branch();
+        branch.setId(1L);
+        branch.setFranchiseId(2L);
+        branch.setName("Branch name");
 
         Mockito.when(branchPersistencePort.existsBranch("Branch name")).thenReturn(Mono.just(branch));
 

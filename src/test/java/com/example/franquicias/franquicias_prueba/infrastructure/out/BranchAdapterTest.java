@@ -24,7 +24,11 @@ public class BranchAdapterTest {
 
     @Test
     public void saveFranchise_shouldSaveBranchTest() {
-        Branch branch = new Branch(1L, "Test Branch", 2L);
+        Branch branch = new Branch();
+        branch.setId(1L);
+        branch.setFranchiseId(2L);
+        branch.setName("Test Branch");
+
         BranchEntity branchEntity = BranchEntity.builder()
                 .name(branch.getName())
                 .franchiseId(branch.getFranchiseId())

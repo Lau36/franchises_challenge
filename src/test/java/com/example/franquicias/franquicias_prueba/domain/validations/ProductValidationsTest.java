@@ -2,6 +2,7 @@ package com.example.franquicias.franquicias_prueba.domain.validations;
 
 import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExistsException;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundException;
+import com.example.franquicias.franquicias_prueba.domain.models.Product;
 import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IProductPersistencePort;
 import com.example.franquicias.franquicias_prueba.domain.validationsUseCase.ProductValidations;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static com.example.franquicias.franquicias_prueba.domain.utils.constans.DomainConstans.PRODUCT_NOT_FOUND;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -61,11 +63,11 @@ public class ProductValidationsTest {
     }
 
     @Test
-    public void findProduct_shouldReturnProductTest() {
+    public void findProduct_shouldReturnProductBrachTest() {
 
         Mockito.when(productPersistencePort.findProductBranchByIds(2L, 3L)).thenReturn(Mono.just(productBranch));
 
-        Mono<ProductBranch> result = productValidations.findProduct(productBranch);
+        Mono<ProductBranch> result = productValidations.findProductBrach(productBranch);
 
         StepVerifier.create(result)
                 .expectNext(productBranch)
@@ -75,16 +77,45 @@ public class ProductValidationsTest {
     }
 
     @Test
-    public void findProduct_shouldReturnErrorTest() {
+    public void findProduct_Brach_shouldReturnErrorTest() {
 
         Mockito.when(productPersistencePort.findProductBranchByIds(2L, 3L)).thenReturn(Mono.empty());
 
-        Mono<ProductBranch> result = productValidations.findProduct(productBranch);
+        Mono<ProductBranch> result = productValidations.findProductBrach(productBranch);
 
         StepVerifier.create(result)
                 .expectError(NotFoundException.class)
                 .verify();
 
         verify(productPersistencePort, times(1)).findProductBranchByIds(2L, 3L);
+    }
+
+    @Test
+    void findProduct_shouldReturnProduct_whenProductExistsTest() {
+        Long productId = 1L;
+        Product mockProduct = new Product();
+        mockProduct.setId(productId);
+        mockProduct.setName("Test Product");
+
+        Mockito.when(productPersistencePort.findProductById(productId))
+                .thenReturn(Mono.just(mockProduct));
+
+        StepVerifier.create(productValidations.findProduct(productId))
+                .expectNextMatches(product -> product.getId().equals(productId) &&
+                        product.getName().equals("Test Product"))
+                .verifyComplete();
+    }
+
+    @Test
+    void findProduct_shouldThrowNotFoundException_whenProductDoesNotExistTest() {
+
+        Long productId = 2L;
+        Mockito.when(productPersistencePort.findProductById(productId))
+                .thenReturn(Mono.empty());
+
+        StepVerifier.create(productValidations.findProduct(productId))
+                .expectErrorMatches(throwable -> throwable instanceof NotFoundException &&
+                        throwable.getMessage().contains(String.format(PRODUCT_NOT_FOUND, productId)))
+                .verify();
     }
 }

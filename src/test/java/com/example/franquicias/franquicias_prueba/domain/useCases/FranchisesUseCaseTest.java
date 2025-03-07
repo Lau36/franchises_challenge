@@ -26,16 +26,18 @@ class FranchisesUseCaseTest {
 
     @Test
     public void addNewFranchise_shoulReturnOkTest() {
-        Franchise franchise = new Franchise(1L, "Franchise 1");
+        Franchise franchise = new Franchise();
+        franchise.setId(1L);
+        franchise.setName("Franchise 1");
 
-        Mockito.when(franchiseValidations.validateFranchiseName(franchise)).thenReturn(Mono.empty());
+        Mockito.when(franchiseValidations.validateFranchiseName(franchise.getName())).thenReturn(Mono.empty());
         Mockito.when(franchisePersistencePort.saveFranchise(franchise)).thenReturn(Mono.empty());
 
         Mono<Void> result = franchiseUseCase.saveFranchise(franchise);
 
         StepVerifier.create(result).verifyComplete();
 
-        Mockito.verify(franchiseValidations, Mockito.times(1)).validateFranchiseName(franchise);
+        Mockito.verify(franchiseValidations, Mockito.times(1)).validateFranchiseName(franchise.getName());
         Mockito.verify(franchisePersistencePort, Mockito.times(1)).saveFranchise(franchise);
     }
 }

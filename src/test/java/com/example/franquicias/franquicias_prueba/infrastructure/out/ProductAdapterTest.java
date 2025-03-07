@@ -166,4 +166,23 @@ public class ProductAdapterTest {
 
         verify(productBranchRepository, times(1)).save(any(ProductBranchEntity.class));
     }
+
+    @Test
+    void findProductById_ShouldReturnProduct_WhenProductExists() {
+
+        ProductEntity mockProductEntity = new ProductEntity();
+        mockProductEntity.setId(1L);
+        mockProductEntity.setName("Test Product");
+
+        when(productRespository.findById(mockProductEntity.getId())).thenReturn(Mono.just(mockProductEntity));
+
+        Mono<Product> result = productAdapter.findProductById(mockProductEntity.getId());
+
+        StepVerifier.create(result)
+                .expectNextMatches(product -> product.getId().equals(mockProductEntity.getId()) &&
+                        product.getName().equals("Test Product"))
+                .verifyComplete();
+
+       verify(productRespository).findById(mockProductEntity.getId());
+    }
 }
