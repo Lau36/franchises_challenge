@@ -4,7 +4,6 @@ import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.
 import com.example.franquicias.franquicias_prueba.infrastructure.in.handler.FranchiseHandler;
 import com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -33,8 +32,41 @@ public class FranchiseRoute {
                     method = RequestMethod.POST,
                     operation = @Operation(
                             operationId = "createFranchise",
-                            summary = "Create a new franchise",
-                            description = "Creates a new franchise",
+                            summary = "Crear una nueva franquicia",
+                            description = "Crea una nueva franquicia",
+                            requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = FranchiseRequest.class))),
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = InfraConstans.STATUS_CODE_201,
+                                            content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
+                                    ),
+                                    @ApiResponse(responseCode = InfraConstans.STATUS_CODE_409,
+                                            description = "El nombre de la franquicia ya existe",
+                                            content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = InfraConstans.STATUS_CODE_400,
+                                            description = "Entrada inválida",
+                                            content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = InfraConstans.STATUS_CODE_500,
+                                            description = "Error interno del servidor",
+                                            content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
+                                    )
+                            }
+                    )
+            ),
+
+            @RouterOperation(
+                    path = InfraConstans.UPDATE_FRANCHISE_PATH,
+                    beanClass = FranchiseHandler.class,
+                    beanMethod = "updateFranchise",
+                    method = RequestMethod.PATCH,
+                    operation = @Operation(
+                            operationId = "updateFranchiseName",
+                            summary = "Actualizar el nombre de la franquicia",
+                            description = "Actualiza el nombre de una franquicia existente",
                             requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = FranchiseRequest.class))),
                             responses = {
                                     @ApiResponse(
@@ -42,26 +74,24 @@ public class FranchiseRoute {
                                             content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
                                     ),
                                     @ApiResponse(
-                                            responseCode = InfraConstans.STATUS_CODE_409,
-                                            description = InfraConstans.DATA_NOT_FOUND,
+                                            responseCode = InfraConstans.STATUS_CODE_404,
+                                            description = "Datos no encontrados",
                                             content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
-                                    )
-                                    ,
+                                    ),
                                     @ApiResponse(
                                             responseCode = InfraConstans.STATUS_CODE_400,
-                                            description = InfraConstans.INVALID_INPUT,
+                                            description = "Entrada inválida",
                                             content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
                                     ),
                                     @ApiResponse(
                                             responseCode = InfraConstans.STATUS_CODE_500,
-                                            description = InfraConstans.SERVER_ERROR,
+                                            description = "Error interno del servidor",
                                             content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
                                     )
                             }
                     )
             )
     })
-
     public RouterFunction<ServerResponse> franchisesRoutes(FranchiseHandler franchiseHandler) {
         return RouterFunctions.route(POST(InfraConstans.ADD_FRANCHISE_PATH), franchiseHandler::createFranchise)
                 .andRoute(PATCH(InfraConstans.UPDATE_FRANCHISE_PATH), franchiseHandler::updateFranchise);
