@@ -4,6 +4,7 @@ import com.example.franquicias.franquicias_prueba.aplication.IBranchRest;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExistsException;
 import com.example.franquicias.franquicias_prueba.domain.models.Branch;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.BranchRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.handler.BranchHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +20,10 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.net.URI;
+import java.util.Optional;
 
 import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.ADD_BRANCH_PATH;
+import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.BRANCH_ID;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,4 +97,24 @@ public class BranchHandlerTest {
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR))
                 .verifyComplete();
     }
+
+    @Test
+    void updateBranchName_ShouldReturnOk_WhenBranchUpdatedSuccessfully() {
+        Long branchId = 1L;
+        String newName = "Updated Branch";
+        ServerRequest mockRequest = mock(ServerRequest.class);
+
+        when(mockRequest.queryParam(BRANCH_ID)).thenReturn(Optional.of(String.valueOf(branchId)));
+
+        NameRequest nameRequest = new NameRequest(newName);
+        when(mockRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.just(nameRequest));
+
+        when(branchRest.updateBranchName(branchId, newName))
+                .thenReturn(Mono.empty());
+
+        StepVerifier.create(branchHandler.updateBranchName(mockRequest))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.OK))
+                .verifyComplete();
+    }
+
 }

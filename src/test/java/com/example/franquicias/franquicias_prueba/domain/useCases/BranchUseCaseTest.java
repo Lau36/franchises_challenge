@@ -58,4 +58,30 @@ class BranchUseCaseTest {
         verify(branchPersistencePort, times(1)).saveFranchise(branch);
     }
 
+    @Test
+    void updateBranchName_ShouldUpdateBranch_WhenBranchExistsAndNameIsValid() {
+        // Arrange
+        Long branchId = 1L;
+        String newName = "Updated Branch";
+        Branch mockBranch = new Branch();
+        mockBranch.setId(branchId);
+        mockBranch.setName("Old Branch");
+
+        when(branchValidations.validateBranchId(branchId))
+                .thenReturn(Mono.just(mockBranch));
+
+        when(branchValidations.validateExistsBranchByName(newName)).thenReturn(Mono.empty());
+
+        when(branchPersistencePort.saveFranchise(mockBranch)).thenReturn(Mono.empty());
+
+        Mono<Void> result = branchUseCase.updateBranchName(branchId, newName);
+
+        StepVerifier.create(result)
+                .verifyComplete();
+
+        verify(branchValidations, times(1)).validateBranchId(branchId);
+        verify(branchValidations, times(1)).validateExistsBranchByName(newName);
+        verify(branchPersistencePort, times(1)).saveFranchise(mockBranch);
+    }
+
 }

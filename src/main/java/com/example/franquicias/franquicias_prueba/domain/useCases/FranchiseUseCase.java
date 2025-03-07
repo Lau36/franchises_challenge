@@ -27,15 +27,14 @@ public class FranchiseUseCase implements IFranchiseServicePort {
     }
 
     @Override
-    public Mono<Franchise> updatFranchiseName(Long franchiseId, String name) {
+    public Mono<Void> updatFranchiseName(Long franchiseId, String name) {
         return franchisePersistencePort.findFranchiseById(franchiseId)
                 .switchIfEmpty(Mono.error(new NotFoundException(FRANCHISE_NOT_FOUND )))
                 .flatMap(existingFranchise ->
                     franchiseValidations.validateFranchiseName(name)
                             .then(Mono.defer(() ->{
                                 existingFranchise.setName(name);
-                                return franchisePersistencePort.saveFranchise(existingFranchise)
-                                        .thenReturn(existingFranchise);
+                                return franchisePersistencePort.saveFranchise(existingFranchise);
                             }))
                 );
     }

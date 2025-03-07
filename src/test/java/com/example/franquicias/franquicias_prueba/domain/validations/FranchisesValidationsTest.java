@@ -84,4 +84,6 @@ public class FranchisesValidationsTest {
 
         verify(franchisePersistencePort, times(1)).existsFranchiseById(1L);
     }
+
+
 }

@@ -19,7 +19,7 @@ public class BranchRest implements IBranchRest {
     }
 
     @Override
-    public Mono<Branch> updateBranchName(Long id, String name) {
+    public Mono<Void> updateBranchName(Long id, String name) {
         return branchServicePort.updateBranchName(id, name);
     }
 }

@@ -3,6 +3,7 @@ package com.example.franquicias.franquicias_prueba.domain.useCases;
 import com.example.franquicias.franquicias_prueba.domain.models.Franchise;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IFranchisePersistencePort;
 import com.example.franquicias.franquicias_prueba.domain.validationsUseCase.FranchiseValidations;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +12,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class FranchisesUseCaseTest {
@@ -37,7 +40,31 @@ class FranchisesUseCaseTest {
 
         StepVerifier.create(result).verifyComplete();
 
-        Mockito.verify(franchiseValidations, Mockito.times(1)).validateFranchiseName(franchise.getName());
-        Mockito.verify(franchisePersistencePort, Mockito.times(1)).saveFranchise(franchise);
+        Mockito.verify(franchiseValidations, times(1)).validateFranchiseName(franchise.getName());
+        Mockito.verify(franchisePersistencePort, times(1)).saveFranchise(franchise);
     }
+
+    @Test
+    void updatFranchiseName_shouldUpdateFranchiseTest() {
+        Long franchiseId = 1L;
+        String newName = "Updated Franchise";
+        Franchise mockFranchise = new Franchise();
+        mockFranchise.setId(franchiseId);
+        mockFranchise.setName("Old Franchise");
+
+        Mockito.when(franchisePersistencePort.findFranchiseById(franchiseId)).thenReturn(Mono.just(mockFranchise));
+
+        Mockito.when(franchiseValidations.validateFranchiseName(newName)).thenReturn(Mono.empty());
+
+        Mockito.when(franchisePersistencePort.saveFranchise(mockFranchise)).thenReturn(Mono.empty());
+
+        Mono<Void> result = franchiseUseCase.updatFranchiseName(franchiseId, newName);
+        StepVerifier.create(result)
+                .verifyComplete();
+
+        Mockito.verify(franchisePersistencePort, times(1)).findFranchiseById(franchiseId);
+        Mockito.verify(franchiseValidations, times(1)).validateFranchiseName(newName);
+        Mockito.verify(franchisePersistencePort, times(1)).saveFranchise(mockFranchise);
+    }
+
 }

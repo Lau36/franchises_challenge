@@ -9,7 +9,9 @@ public class InfraConstans {
     public static final String FRANCHISE_ID_REQUIRED = "El id de la franquicia es requerido";
     public static final String NAME_REQUIRED = "El nuevo nombre es requerido";
 
-    public static final String PRODUCT_NAME_UPDATED = "El producto quedó correctamente actualizado con el nombre '%s'";
+    public static final String PRODUCT_NAME_UPDATED = "El nombre del producto quedó correctamente actualizado con el valor de '%s'";
+    public static final String BRANCH_NAME_UPDATED = "El nombre de la sucursal quedó correctamente actualizado con el valor de '%s'";
+    public static final String FRANCHISE_NAME_UPDATED = "El nombre de la franquicia quedó correctamente actualizado con el valor de '%s'";
     public static final String PRODUCT_STOCK_UPDATED = "Se actualizó el stock del producto correctamente";
 
     public static final String PRODUCT_ID = "productId";

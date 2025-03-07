@@ -29,7 +29,7 @@ public class BranchUseCase implements IBranchServicePort {
     }
 
     @Override
-    public Mono<Branch> updateBranchName(Long id, String name) {
+    public Mono<Void> updateBranchName(Long id, String name) {
         return branchValidations.validateBranchId(id)
                 .flatMap(
                         existingBranch ->
@@ -37,8 +37,7 @@ public class BranchUseCase implements IBranchServicePort {
                                     .then(
                                     Mono.defer(() -> {
                                         existingBranch.setName(name);
-                                        return branchPersistencePort.saveFranchise(existingBranch)
-                                                .thenReturn(existingBranch);
+                                        return branchPersistencePort.saveFranchise(existingBranch);
                                     })
                             )
 
