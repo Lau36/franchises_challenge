@@ -55,10 +55,11 @@ public class BranchHandler {
                             .switchIfEmpty(Mono.error(new InvalidDataException(NAME_REQUIRED)))
                             .flatMap(
                                     request -> branchRest.updateBranchName(branchId, request.getNewName())
+                                            .thenReturn(request.getNewName())
                             );
 
                 })
-                .flatMap(response -> ServerResponse.ok().bodyValue(response))
+                .flatMap(name -> ServerResponse.ok().bodyValue(String.format(BRANCH_NAME_UPDATED, name)))
                 .onErrorResume(NotFoundException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(AlreadyExistsException.class, ex ->

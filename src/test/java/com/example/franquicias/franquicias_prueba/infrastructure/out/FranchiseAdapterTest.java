@@ -74,4 +74,5 @@ public class FranchiseAdapterTest {
         Mockito.verify(franchiseRepository, Mockito.times(1)).existsFranchiseById(1L);
     }
 
+
 }

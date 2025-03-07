@@ -53,10 +53,11 @@ public class FranchiseHandler {
                             .switchIfEmpty(Mono.error(new InvalidDataException(NAME_REQUIRED)))
                             .flatMap(
                             request -> franchiseRest.updateFranchise(franchiseId, request.getNewName())
+                                    .thenReturn(request.getNewName())
                     );
 
                 })
-                .flatMap(response -> ServerResponse.ok().bodyValue(response))
+                .flatMap(name -> ServerResponse.ok().bodyValue(String.format(FRANCHISE_NAME_UPDATED, name)))
                 .onErrorResume(AlreadyExistsException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(NotFoundException.class, ex ->

@@ -42,12 +42,4 @@ public class FranchiseAdapter implements IFranchisePersistencePort {
         );
     }
 
-//    @Override
-//    public Mono<Franchise> updateName(Franchise franchise) {
-//        FranchiseEntity entity = FranchiseEntity.builder()
-//                .name(franchise.getName())
-//                .id(franchise.getId())
-//                .build();
-//        return franchiseRepository.save(entity);
-//    }
 }

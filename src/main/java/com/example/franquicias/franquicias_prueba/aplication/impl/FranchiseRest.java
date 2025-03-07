@@ -16,7 +16,7 @@ public class FranchiseRest implements IFranchiseRest {
     }
 
     @Override
-    public Mono<Franchise> updateFranchise(Long id, String name) {
+    public Mono<Void> updateFranchise(Long id, String name) {
         return franchiseServicePort.updatFranchiseName(id, name);
     }
 }

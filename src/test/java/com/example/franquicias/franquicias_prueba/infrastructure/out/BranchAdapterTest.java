@@ -120,4 +120,30 @@ public class BranchAdapterTest {
 
         verify(branchRepository, times(1)).existsBranchById(1L);
     }
+
+    @Test
+    void findBranchById_shouldReturnBranchTest() {
+        Long branchId = 1L;
+        Long franchiseId = 100L;
+
+        BranchEntity mockBranchEntity = new BranchEntity();
+        mockBranchEntity.setId(branchId);
+        mockBranchEntity.setName("Test Branch");
+        mockBranchEntity.setFranchiseId(franchiseId);
+
+        when(branchRepository.findBranchById(branchId))
+                .thenReturn(Mono.just(mockBranchEntity));
+
+        Mono<Branch> result = branchAdapter.findBranchById(branchId);
+
+        StepVerifier.create(result)
+                .expectNextMatches(branch -> branch.getId().equals(branchId) &&
+                        branch.getName().equals("Test Branch") &&
+                        branch.getFranchiseId().equals(franchiseId))
+                .verifyComplete();
+
+        verify(branchRepository, times(1)).findBranchById(branchId);
+    }
+
+
 }

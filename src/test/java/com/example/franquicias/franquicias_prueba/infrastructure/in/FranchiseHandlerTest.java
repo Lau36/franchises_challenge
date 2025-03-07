@@ -4,6 +4,7 @@ import com.example.franquicias.franquicias_prueba.aplication.IFranchiseRest;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExistsException;
 import com.example.franquicias.franquicias_prueba.domain.models.Franchise;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.FranchiseRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.handler.FranchiseHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,10 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.net.URI;
+import java.util.Optional;
 
 import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.ADD_FRANCHISE_PATH;
+import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.FRANCHISE_ID;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -100,4 +103,25 @@ public class FranchiseHandlerTest {
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR))
                 .verifyComplete();
     }
+
+    @Test
+    void updateFranchise_ShouldReturnOk_WhenFranchiseUpdatedSuccessfully() {
+        Long franchiseId = 1L;
+        String newName = "Updated Franchise";
+        ServerRequest mockRequest = mock(ServerRequest.class);
+
+        Mockito.when(mockRequest.queryParam(FRANCHISE_ID)).thenReturn(Optional.of(String.valueOf(franchiseId)));
+
+        NameRequest nameRequest = new NameRequest(newName);
+        Mockito.when(mockRequest.bodyToMono(NameRequest.class)).thenReturn(Mono.just(nameRequest));
+
+        Mockito.when(franchiseRest.updateFranchise(franchiseId, newName))
+                .thenReturn(Mono.empty());
+
+        StepVerifier.create(franchiseHandler.updateFranchise(mockRequest))
+                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.OK))
+                .verifyComplete();
+    }
+
+
 }

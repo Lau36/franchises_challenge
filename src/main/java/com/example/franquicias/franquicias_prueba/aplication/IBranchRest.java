@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface IBranchRest {
     Mono<Void> addBranch(Branch branch);
-    Mono<Branch> updateBranchName(Long id, String name);
+    Mono<Void> updateBranchName(Long id, String name);
 }
