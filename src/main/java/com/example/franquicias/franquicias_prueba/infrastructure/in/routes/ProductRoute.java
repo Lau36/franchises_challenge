@@ -104,8 +104,8 @@ public class ProductRoute {
                     method = RequestMethod.GET,
                     operation = @Operation(
                             operationId = "getProducts",
-                            summary = "Obtener el stock de productos",
-                            description = "Recupera los detalles de stock de los productos disponibles",
+                            summary = "Obtener los productos con mayor stock",
+                            description = "Obtiene los productos que tienen mayor stock por sucursal de acuerdo a una franquicia",
                             parameters = {
                                     @Parameter(name = FRANCHISE_ID, description = "ID de la franquicia", required = true),
                             },
