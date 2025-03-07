@@ -5,4 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface IFranchiseRest {
     Mono<Void> createFranchise(Franchise franchise);
+    Mono<Void> updateFranchise(Long id, String name);
 }

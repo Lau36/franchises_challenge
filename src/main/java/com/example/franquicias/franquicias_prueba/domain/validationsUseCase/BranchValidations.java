@@ -2,6 +2,7 @@ package com.example.franquicias.franquicias_prueba.domain.validationsUseCase;
 
 import com.example.franquicias.franquicias_prueba.domain.exceptions.AlreadyExistsException;
 import com.example.franquicias.franquicias_prueba.domain.exceptions.NotFoundException;
+import com.example.franquicias.franquicias_prueba.domain.models.Branch;
 import com.example.franquicias.franquicias_prueba.domain.ports.out.IBranchPersistencePort;
 import reactor.core.publisher.Mono;
 
@@ -27,5 +28,10 @@ public class BranchValidations {
                 .filter(Boolean::booleanValue)
                 .switchIfEmpty(Mono.error(new NotFoundException(String.format(BRANCH_NOT_FOUND, branchId))))
                 .then();
+    }
+
+    public Mono<Branch> validateBranchId(Long branchId) {
+        return branchPersistencePort.findBranchById(branchId)
+                .switchIfEmpty(Mono.error(new NotFoundException(String.format(BRANCH_NOT_FOUND, branchId))));
     }
 }

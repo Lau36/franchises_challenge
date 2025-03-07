@@ -5,12 +5,6 @@ public class Branch {
     private String name;
     private Long franchiseId;
 
-    public Branch(Long id, String name, Long franchiseId) {
-        this.id = id;
-        this.name = name;
-        this.franchiseId = franchiseId;
-    }
-
     public Long getId() {
         return id;
     }

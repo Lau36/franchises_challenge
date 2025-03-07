@@ -19,6 +19,7 @@ public class ProductRoute {
         return RouterFunctions.route(POST(InfraConstans.ADD_PRODUCT_PATH), productHandler::addNewProduct)
                 .andRoute(DELETE(InfraConstans.DELETE_PRODUCT_PATH), productHandler::deleteProduct)
                 .andRoute(GET(InfraConstans.GET_PRODUCTS_STOCK_PATH), productHandler::getProducts)
-                .andRoute(PUT(InfraConstans.UPDATE_STOCK_PATH), productHandler::updateStockProduct);
+                .andRoute(PUT(InfraConstans.UPDATE_STOCK_PATH), productHandler::updateStockProduct)
+                .andRoute(PATCH(InfraConstans.UPDATE_PRODUCT_PATH), productHandler::updateProductName);
     }
 }

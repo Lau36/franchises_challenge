@@ -57,11 +57,23 @@ public class ProductUseCase implements IProductServicePort {
 
     @Override
     public Mono<ProductBranch> updateStock(ProductBranch productBranch) {
-        return productValidations.findProduct(productBranch).
+        return productValidations.findProductBrach(productBranch).
                 flatMap( existingProduct -> {
                     existingProduct.setStock(productBranch.getStock());
                     return productPersistencePort.updateProduct(existingProduct);
                 });
+    }
+
+    @Override
+    public Mono<Void> updateProductName(Long id, String name) {
+        return productValidations.findProduct(id).flatMap(
+                existingProduct ->
+                    productValidations.validateProductName(name).then(
+                            Mono.defer(() -> {
+                                existingProduct.setName(name);
+                                return productPersistencePort.addProduct(existingProduct);
+                            })
+                    )).then();
     }
 
 

@@ -7,17 +7,28 @@ public class InfraConstans {
     public static final String PRODUCT_ID_REQUIRED = "El id del producto es requerido";
     public static final String BRANCH_ID_REQUIRED = "El id de la sucursal es requerido";
     public static final String FRANCHISE_ID_REQUIRED = "El id de la franquicia es requerido";
+    public static final String NAME_REQUIRED = "El nuevo nombre es requerido";
+
+    public static final String PRODUCT_NAME_UPDATED = "El nombre del producto quedó correctamente actualizado con el valor de '%s'";
+    public static final String BRANCH_NAME_UPDATED = "El nombre de la sucursal quedó correctamente actualizado con el valor de '%s'";
+    public static final String FRANCHISE_NAME_UPDATED = "El nombre de la franquicia quedó correctamente actualizado con el valor de '%s'";
+    public static final String PRODUCT_STOCK_UPDATED = "Se actualizó el stock del producto correctamente";
 
     public static final String PRODUCT_ID = "productId";
     public static final String BRANCH_ID = "branchId";
     public static final String FRANCHISE_ID = "franchiseId";
 
-    public static final String ADD_FRANCHISE_PATH = "/api/v1/franquicias/add";
+    public static final String ADD_FRANCHISE_PATH = "/api/v1/franchise/add";
     public static final String ADD_BRANCH_PATH = "/api/v1/branch/add";
     public static final String ADD_PRODUCT_PATH = "/api/v1/product/add";
+    public static final String UPDATE_FRANCHISE_PATH = "/api/v1/franchise/update";
+    public static final String UPDATE_BRANCH_PATH = "/api/v1/branch/update";
+    public static final String UPDATE_PRODUCT_PATH = "/api/v1/product/update";
+    public static final String UPDATE_STOCK_PATH = "/api/v1/product/update/stock";
+
     public static final String DELETE_PRODUCT_PATH = "/api/v1/product/delete";
     public static final String GET_PRODUCTS_STOCK_PATH = "/api/v1/product/get";
-    public static final String UPDATE_STOCK_PATH = "/api/v1/product/update/stock";
+
 
     //Swagger constans
     public static final String STATUS_CODE_201 = "201";
@@ -32,7 +43,7 @@ public class InfraConstans {
     public static final String APPLICATION_JSON = "application/json";
 
 
-    public static final String QUERY_TO_GET_TOP_STOCKED_PRODUCTS_BY_FRANCHISE_ID =
+    public static final String QUERY_TO_GET_MOST_STOCKED_PRODUCTS_BY_FRANCHISE_ID =
            """
            SELECT p.name, pb.stock, b.name AS branch_name
            FROM product_branch pb

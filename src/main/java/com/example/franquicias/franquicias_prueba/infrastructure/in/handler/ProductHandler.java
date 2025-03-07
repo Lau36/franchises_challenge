@@ -8,6 +8,7 @@ import com.example.franquicias.franquicias_prueba.domain.models.Product;
 import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.BranchRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductsTopStockResponse;
@@ -95,6 +96,8 @@ public class ProductHandler {
                 .flatMap(response -> ServerResponse.ok().bodyValue(response))
                 .onErrorResume(NotFoundException.class, ex ->
                         ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                .onErrorResume(AlreadyExistsException.class, ex ->
+                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
                 .onErrorResume( ex ->
@@ -124,4 +127,30 @@ public class ProductHandler {
                         ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(SERVER_ERROR))
                 ;
     }
+
+    public Mono<ServerResponse> updateProductName(ServerRequest serverRequest) {
+        return Mono.defer( () -> {
+                    Long productId = Long.valueOf(serverRequest.queryParam(PRODUCT_ID).orElseThrow(
+                            () -> new InvalidDataException(PRODUCT_ID_REQUIRED )
+                    ));
+                    return serverRequest.bodyToMono(NameRequest.class)
+                            .switchIfEmpty(Mono.error(new InvalidDataException(NAME_REQUIRED)))
+                            .flatMap(
+                                    request -> productRest.updateProductName(productId, request.getNewName())
+                                            .thenReturn(request.getNewName())
+                            );
+
+                })
+                .flatMap(productName -> ServerResponse.ok().bodyValue(String.format(PRODUCT_NAME_UPDATED,productName)))
+                .onErrorResume(NotFoundException.class, ex ->
+                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                .onErrorResume(AlreadyExistsException.class, ex ->
+                        ServerResponse.status(HttpStatus.CONFLICT).bodyValue(ex.getMessage()))
+                .onErrorResume(InvalidDataException.class, ex ->
+                        ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
+                .onErrorResume( ex ->
+                        ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue(SERVER_ERROR))
+                ;
+    }
+
 }
