@@ -82,10 +82,6 @@ public class ProductRoute {
                                     @ApiResponse(responseCode = InfraConstans.STATUS_CODE_200,
                                             description = "Producto eliminado exitosamente"
                                     ),
-                                    @ApiResponse(responseCode = InfraConstans.STATUS_CODE_404,
-                                            description = "Datos no encontrados",
-                                            content = @Content(mediaType = InfraConstans.APPLICATION_JSON)
-                                    ),
                                     @ApiResponse(responseCode = InfraConstans.STATUS_CODE_400,
                                             description = "Entrada inválida",
                                             content = @Content(mediaType = InfraConstans.APPLICATION_JSON)

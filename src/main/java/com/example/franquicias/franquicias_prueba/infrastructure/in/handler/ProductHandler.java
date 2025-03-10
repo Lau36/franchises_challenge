@@ -65,8 +65,6 @@ public class ProductHandler {
 
                 })
                 .then(ServerResponse.ok().build())
-                .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
                 .onErrorResume( ex ->
