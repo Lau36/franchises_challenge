@@ -1,5 +1,5 @@
 variable "alb_dns_name" {
-  description = "DNS del ALB para configurar las integraciones del API Gateway"
+  description = "DNS del balanceador de carga para el manejo de las integraciones con el API GATEWAY"
   type        = string
 }
 

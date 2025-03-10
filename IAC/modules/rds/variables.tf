@@ -4,9 +4,9 @@ variable "db_name" {
   description = "Nombre de la base de datos"
 }
 
-variable "vpc_id"{
-    description = "Id de la vpc"
-    type = string
+variable "vpc_id" {
+  description = "Id de la vpc"
+  type        = string
 }
 
 variable "db_username" {

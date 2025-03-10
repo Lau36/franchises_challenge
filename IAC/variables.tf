@@ -13,6 +13,6 @@ variable "subnet_ids" {
 
 variable "db_password"{
     type = string
-    description = "contraseña de la base de datos"
+    description = "Contraseña de la base de datos"
 }
 
