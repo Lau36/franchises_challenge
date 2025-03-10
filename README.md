@@ -61,7 +61,7 @@ Para correr la aplicación sin Docker, necesitas instalar los siguientes compone
 ## Ejecutar con Docker
 
 ### Configuración del archivo `.env`
-Antes de ejecutar con Docker, asegúrate de crear un archivo `.env` en la raíz del proyecto con las siguientes credenciales:
+Antes de ejecutar con Docker, asegúrate de tener un archivo `.env` en la raíz del proyecto con las siguientes credenciales:
 
 ```env
 DATABASE_URL=r2dbc:mysql://database-franchises.cot4aa2qs92t.us-east-1.rds.amazonaws.com:3306/franchises
