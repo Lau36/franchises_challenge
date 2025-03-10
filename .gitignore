@@ -5,6 +5,30 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# Ignorar archivos de estado de Terraform
+IAC/*.tfstate
+IAC/*.tfstate.backup
+
+# Ignorar archivos de planes de ejecución
+IAC/*.tfplan
+
+# Ignorar archivos de lock de Terraform
+IAC/.terraform.lock.hcl
+
+# Ignorar toda la caché de Terraform
+IAC/.terraform/
+
+# Ignorar archivos de configuración local y overrides
+IAC/override.tf
+IAC/override.tf.json
+IAC/*.auto.tfvars
+IAC/terraform.tfvars
+IAC/terraform.tfvars.json
+
+# Ignorar logs de Terraform en caso de errores
+IAC/crash.log
+IAC/crash.*.log
+
 ### STS ###
 .apt_generated
 .classpath
