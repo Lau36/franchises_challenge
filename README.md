@@ -22,7 +22,7 @@ Para correr la aplicación sin Docker, necesitas instalar los siguientes compone
    spring.sql.init.mode=always
    spring.sql.init.data-locations=classpath:/database/data.sql
    spring.r2dbc.username=${DATABASE_USER_NAME:root}
-   spring.r2dbc.password=${DATABASE_PASSWORD:root}
+   spring.r2dbc.password=${DATABASE_PASSWORD:l1109660212j}
    spring.r2dbc.url=${DATABASE_URL:r2dbc:mysql://localhost:3306/franchises}
    
    logging.level.org.springframework.r2dbc=DEBUG
@@ -32,7 +32,7 @@ Para correr la aplicación sin Docker, necesitas instalar los siguientes compone
 
 1. Clona el repositorio y accede a la carpeta del proyecto:
    ```sh
-   git clone https://github.com/tu_usuario/franquicias_prueba.git
+   git https://github.com/Lau36/franchises_challenge.git
    cd franquicias_prueba
    ```
 
@@ -60,20 +60,11 @@ Para correr la aplicación sin Docker, necesitas instalar los siguientes compone
 
 ## Ejecutar con Docker
 
-### Configuración del archivo `.env`
-Antes de ejecutar con Docker, asegúrate de tener un archivo `.env` en la raíz del proyecto con las siguientes credenciales:
-
-```env
-DATABASE_URL=r2dbc:mysql://database-franchises.cot4aa2qs92t.us-east-1.rds.amazonaws.com:3306/franchises
-DATABASE_USER_NAME=admin
-DATABASE_PASSWORD=admin12345#
-```
-
 ### Pasos para Ejecutar con Docker
 
 1. Clona el repositorio y accede a la carpeta del proyecto:
    ```sh
-   git clone https://github.com/tu_usuario/franquicias_prueba.git
+   git clone https://github.com/Lau36/franchises_challenge.git
    cd franquicias_prueba
    ```
 
