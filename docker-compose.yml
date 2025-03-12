@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  db:
+    image: mysql:8.0
+    container_name: db-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: franchises
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
   spring-app:
     container_name: franchises-api-container
     build:
@@ -9,6 +23,9 @@ services:
     ports:
       - "9090:9090"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - DATABASE_USER_NAME=${DATABASE_USER_NAME}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_URL=r2dbc:mysql://db-mysql:3306/franchises
+      - DATABASE_USER_NAME=root
+      - DATABASE_PASSWORD=admin
+
+volumes:
+  mysql-data:
