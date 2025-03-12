@@ -8,6 +8,7 @@ import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductStockResponse;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductsTopStockResponse;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.execptions.InvalidDataException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.*;
 
@@ -65,8 +68,6 @@ public class ProductHandler {
 
                 })
                 .then(ServerResponse.ok().build())
-                .onErrorResume(NotFoundException.class, ex ->
-                        ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
                         ServerResponse.status(HttpStatus.BAD_REQUEST).bodyValue(ex.getMessage()))
                 .onErrorResume( ex ->
@@ -83,9 +84,18 @@ public class ProductHandler {
                     ));
 
                     return productRest.getAllProductStockByFranchise(franchiseId)
-                            .map(products -> ProductsTopStockResponse.builder()
+                            .map(products ->
+                                    ProductsTopStockResponse.builder()
                                     .franchiseId(franchiseId)
-                                    .products(products.getProducts())
+
+                                    .products(products.getProducts().stream().map(
+                                            productStockResponse ->
+                                                    ProductStockResponse.builder()
+                                                    .branchName(productStockResponse.getBranchName())
+                                            .name(productStockResponse.getName())
+                                                    .stock(productStockResponse.getStock())
+                                            .build()).toList()
+                                    )
                                     .build());
                 })
                 .flatMap(response -> ServerResponse.ok().bodyValue(response))

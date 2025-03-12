@@ -10,6 +10,8 @@ import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFra
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.NameRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductStockResponse;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductsTopStockResponse;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.execptions.InvalidDataException;
 import com.example.franquicias.franquicias_prueba.infrastructure.in.handler.ProductHandler;
 import com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans;
@@ -27,9 +29,11 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.franquicias.franquicias_prueba.infrastructure.utils.constants.InfraConstans.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -87,11 +91,17 @@ public class ProductHandlerTest {
     public void getProducts_ShouldReturnOkStatus() {
         ServerRequest request = mock(ServerRequest.class);
 
+        ProductStockByFranchise mockResponse = new ProductStockByFranchise();
+        mockResponse.setProducts(List.of(
+                new ProductStock("Sucursal A", "Producto A", 10)
+        ));
+
         when(request.queryParam("franchiseId")).thenReturn(Optional.of("1"));
-        when(productRest.getAllProductStockByFranchise(1L)).thenReturn(Mono.just(new ProductStockByFranchise()));
+        when(productRest.getAllProductStockByFranchise(1L)).thenReturn(Mono.just(mockResponse));
 
         StepVerifier.create(productHandler.getProducts(request))
-                .expectNextMatches(response -> response.statusCode().equals(HttpStatus.OK))
+                .consumeNextWith(response ->
+                        assertEquals(HttpStatus.OK, response.statusCode()))
                 .verifyComplete();
 
         verify(productRest, times(1)).getAllProductStockByFranchise(1L);
