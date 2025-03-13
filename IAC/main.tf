@@ -1,9 +1,16 @@
 module "ecr" {
   source = "./modules/ecr"
 }
-
+terraform {
+  backend "s3" {
+    bucket  = "franchises-tf-state-bucket"
+    key     = "terraform.tfstate"
+    region  = "us-east-1"
+    encrypt = true
+  }
+}
 module "ecs" {
-  source = "./modules/ecs"
+  source               = "./modules/ecs"
   cluster_name         = "Franchise-cluster-tf"
   subnet_ids           = var.subnet_ids
   ecs_task_sg_id       = module.alb.ecs_task_sg_id
@@ -15,9 +22,9 @@ module "ecs" {
 
 
 module "alb" {
-  source        = "./modules/alb"
-  vpc_id        = var.vpc_id
-  subnet_ids    = var.subnet_ids
+  source     = "./modules/alb"
+  vpc_id     = var.vpc_id
+  subnet_ids = var.subnet_ids
 }
 
 module "api_gateway" {
@@ -27,6 +34,6 @@ module "api_gateway" {
 
 module "rds" {
   vpc_id      = var.vpc_id
-  source     = "./modules/rds"
+  source      = "./modules/rds"
   db_password = var.db_password
 }
