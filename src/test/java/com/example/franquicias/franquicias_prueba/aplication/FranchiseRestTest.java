@@ -3,6 +3,7 @@ package com.example.franquicias.franquicias_prueba.aplication;
 import com.example.franquicias.franquicias_prueba.aplication.impl.FranchiseRest;
 import com.example.franquicias.franquicias_prueba.domain.models.Franchise;
 import com.example.franquicias.franquicias_prueba.domain.ports.in.IFranchiseServicePort;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.FranchiseRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,24 +23,23 @@ public class FranchiseRestTest {
     @InjectMocks
     private FranchiseRest franchiseRest;
 
-    private Franchise franchise;
+    private FranchiseRequest franchiseRequest;
 
     @BeforeEach
     void setUp() {
-        franchise = new Franchise();
-        franchise.setId(1L);
-        franchise.setName("Franquicia Principal");
+        franchiseRequest = new FranchiseRequest();
+        franchiseRequest.setName("Franquicia Principal");
     }
 
     @Test
     void testCreateFranchise_successTest() {
-        when(franchiseServicePort.saveFranchise(franchise)).thenReturn(Mono.empty());
+        when(franchiseServicePort.saveFranchise(any(Franchise.class))).thenReturn(Mono.empty());
 
-        Mono<Void> result = franchiseRest.createFranchise(franchise);
+        Mono<Void> result = franchiseRest.createFranchise(franchiseRequest);
 
         StepVerifier.create(result).verifyComplete();
 
-        verify(franchiseServicePort, times(1)).saveFranchise(franchise);
+        verify(franchiseServicePort, times(1)).saveFranchise(any(Franchise.class));
     }
 
     @Test

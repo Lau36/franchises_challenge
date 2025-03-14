@@ -5,6 +5,10 @@ import com.example.franquicias.franquicias_prueba.domain.models.Product;
 import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.ports.in.IProductServicePort;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductStockResponse;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductsTopStockResponse;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +18,13 @@ public class ProductRest implements IProductRest {
     private final IProductServicePort productServicePort;
 
     @Override
-    public Mono<Void> addNewProduct(Product product) {
+    public Mono<Void> addNewProduct(ProductRequest productRequest) {
+        Product product = new Product();
+        product.setName(productRequest.getName());
+        product.setName(productRequest.getName());
+        product.setBranchId((long) productRequest.getBranchId());
+        product.setStock(productRequest.getStock());
+
         return productServicePort.addNewProduct(product);
     }
 
@@ -24,13 +34,26 @@ public class ProductRest implements IProductRest {
     }
 
     @Override
-    public Mono<ProductStockByFranchise> getAllProductStockByFranchise(Long franchiseId) {
-        return productServicePort.getProducst(franchiseId);
+    public Mono<ProductsTopStockResponse> getAllProductStockByFranchise(Long franchiseId) {
+        return productServicePort.getProducst(franchiseId).map(products ->
+                ProductsTopStockResponse.builder()
+                        .franchiseId(franchiseId)
+                        .products(products.getProducts().stream().map(
+                                productStockResponse ->
+                                        ProductStockResponse.builder()
+                                                .branchName(productStockResponse.getBranchName())
+                                                .name(productStockResponse.getName())
+                                                .stock(productStockResponse.getStock())
+                                                .build()).toList()
+                        )
+                        .build());
     }
 
     @Override
-    public Mono<ProductBranch> updateStock(ProductBranch productBranch) {
-        return productServicePort.updateStock(productBranch);
+    public Mono<Void> updateStock(ProductBranchRequest productBranchRequest) {
+        ProductBranch productBranch = new ProductBranch();
+        productBranch.setBranchId(productBranchRequest.getBranchId());
+        return productServicePort.updateStock(productBranch).then();
     }
 
     @Override

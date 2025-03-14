@@ -30,11 +30,6 @@ public class FranchiseHandler {
         Franchise franchise = new Franchise();
         return serverRequest.bodyToMono(FranchiseRequest.class)
                 .switchIfEmpty(Mono.error(new InvalidDataException(FRANCHISE_INFO_REQUIRED)))
-                .map(franchiseRequest -> {
-                            franchise.setName(franchiseRequest.getName());
-                            return franchise;
-                        }
-                )
                 .flatMap(franchiseRest::createFranchise)
                 .then(ServerResponse.status(HttpStatus.CREATED).build())
                 .onErrorResume(AlreadyExistsException.class, ex ->
