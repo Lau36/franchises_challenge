@@ -53,6 +53,8 @@ public class ProductRest implements IProductRest {
     public Mono<Void> updateStock(ProductBranchRequest productBranchRequest) {
         ProductBranch productBranch = new ProductBranch();
         productBranch.setBranchId(productBranchRequest.getBranchId());
+        productBranch.setProductId(productBranchRequest.getProductId());
+        productBranch.setStock(productBranchRequest.getStock());
         return productServicePort.updateStock(productBranch).then();
     }
 
