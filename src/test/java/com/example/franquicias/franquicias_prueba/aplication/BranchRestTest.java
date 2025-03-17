@@ -3,6 +3,7 @@ package com.example.franquicias.franquicias_prueba.aplication;
 import com.example.franquicias.franquicias_prueba.aplication.impl.BranchRest;
 import com.example.franquicias.franquicias_prueba.domain.models.Branch;
 import com.example.franquicias.franquicias_prueba.domain.ports.in.IBranchServicePort;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.BranchRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,25 +24,26 @@ public class BranchRestTest {
     @InjectMocks
     private BranchRest branchRest;
 
-    private Branch branch;
+    private BranchRequest branchRequest;
 
     @BeforeEach
     void setUp() {
-        branch = new Branch();
-        branch.setId(1L);
-        branch.setName("Sucursal Principal");
+
+        branchRequest = new BranchRequest();
+        branchRequest.setName("Sucursal Principal");
+        branchRequest.setFranchiseId(1);
     }
 
     @Test
     void testAddBranch_Success() {
-        when(branchServicePort.addBranch(branch)).thenReturn(Mono.empty());
+        when(branchServicePort.addBranch(any(Branch.class))).thenReturn(Mono.empty());
 
-        Mono<Void> result = branchRest.addBranch(branch);
+        Mono<Void> result = branchRest.addBranch(branchRequest);
 
         StepVerifier.create(result)
                 .verifyComplete();
 
-        verify(branchServicePort, times(1)).addBranch(branch);
+        verify(branchServicePort, times(1)).addBranch(any(Branch.class));
     }
 
     @Test

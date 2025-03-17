@@ -4,7 +4,12 @@ import com.example.franquicias.franquicias_prueba.aplication.impl.ProductRest;
 import com.example.franquicias.franquicias_prueba.domain.models.Product;
 import com.example.franquicias.franquicias_prueba.domain.models.ProductBranch;
 import com.example.franquicias.franquicias_prueba.domain.ports.in.IProductServicePort;
+import com.example.franquicias.franquicias_prueba.domain.utils.ProductStock;
 import com.example.franquicias.franquicias_prueba.domain.utils.ProductStockByFranchise;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductBranchRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.request.ProductRequest;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductStockResponse;
+import com.example.franquicias.franquicias_prueba.infrastructure.in.dto.response.ProductsTopStockResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +18,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.List;
+import java.util.Objects;
 
 import static org.mockito.Mockito.*;
 
@@ -25,34 +33,53 @@ public class ProductRestTest {
     @InjectMocks
     private ProductRest productRest;
 
-    private Product product;
+    private ProductRequest productRequest;
     private ProductBranch productBranch;
+    private ProductBranchRequest productBranchRequest;
+    private ProductsTopStockResponse productsTopStockResponse;
     private ProductStockByFranchise productStockByFranchise;
 
     @BeforeEach
     void setUp() {
-        product = new Product();
-        product.setId(1L);
-        product.setName("Producto A");
+        productRequest = new ProductRequest();
+        productRequest.setBranchId(1);
+        productRequest.setName("Producto A");
 
         productBranch = new ProductBranch();
         productBranch.setBranchId(1L);
         productBranch.setProductId(1L);
         productBranch.setStock(100);
 
+        productsTopStockResponse = new ProductsTopStockResponse();
         productStockByFranchise = new ProductStockByFranchise();
+
+        productStockByFranchise.setProducts(List.of(
+                new ProductStock("Producto 1", "Sucursal 1", 10)));
+
+        ProductStockResponse productStockResponse = new ProductStockResponse();
+        productStockResponse.setName("Producto 1");
+        productStockResponse.setStock(10);
+        productStockResponse.setBranchName("Sucursal 1");
+
+        productsTopStockResponse.setProducts(List.of(productStockResponse));
+
+        productBranchRequest = new ProductBranchRequest();
+        productBranchRequest.setBranchId(1L);
+        productBranchRequest.setProductId(1L);
+        productBranchRequest.setStock(10);
     }
 
     @Test
-    void testAddNewProduct_Success() {
-        when(productServicePort.addNewProduct(product)).thenReturn(Mono.empty());
+    void
+    testAddNewProduct_Success() {
+        when(productServicePort.addNewProduct(any(Product.class))).thenReturn(Mono.empty());
 
-        Mono<Void> result = productRest.addNewProduct(product);
+        Mono<Void> result = productRest.addNewProduct(productRequest);
 
         StepVerifier.create(result)
                 .verifyComplete();
 
-        verify(productServicePort, times(1)).addNewProduct(product);
+        verify(productServicePort, times(1)).addNewProduct(any(Product.class));
     }
 
     @Test
@@ -75,21 +102,27 @@ public class ProductRestTest {
         when(productServicePort.getProducst(franchiseId)).thenReturn(Mono.just(productStockByFranchise));
 
         StepVerifier.create(productRest.getAllProductStockByFranchise(franchiseId))
-                .expectNext(productStockByFranchise)
+                .expectNextMatches(response ->
+                        response.getFranchiseId().equals(franchiseId) &&
+                                response.getProducts().size() == productsTopStockResponse.getProducts().size() &&
+                                response.getProducts().get(0).getName().equals(productsTopStockResponse.getProducts().get(0).getName()) &&
+                                response.getProducts().get(0).getBranchName().equals(productsTopStockResponse.getProducts().get(0).getBranchName()) &&
+                                Objects.equals(response.getProducts().get(0).getStock(), productsTopStockResponse.getProducts().get(0).getStock())
+                )
                 .verifyComplete();
+
 
         verify(productServicePort, times(1)).getProducst(franchiseId);
     }
 
     @Test
     void testUpdateStock_Success() {
-        when(productServicePort.updateStock(productBranch)).thenReturn(Mono.just(productBranch));
+        when(productServicePort.updateStock(any(ProductBranch.class))).thenReturn(Mono.just(productBranch));
 
-        StepVerifier.create(productRest.updateStock(productBranch))
-                .expectNext(productBranch)
+        StepVerifier.create(productRest.updateStock(productBranchRequest))
                 .verifyComplete();
 
-        verify(productServicePort, times(1)).updateStock(productBranch);
+        verify(productServicePort, times(1)).updateStock(any(ProductBranch.class));
     }
 
     @Test

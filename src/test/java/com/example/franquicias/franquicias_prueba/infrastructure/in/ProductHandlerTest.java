@@ -62,13 +62,13 @@ public class ProductHandlerTest {
                 .uri(URI.create(ADD_PRODUCT_PATH))
                 .body(Mono.just(productRequest));
 
-        when(productRest.addNewProduct(any(Product.class))).thenReturn(Mono.empty());
+        when(productRest.addNewProduct(any(ProductRequest.class))).thenReturn(Mono.empty());
 
         StepVerifier.create(productHandler.addNewProduct(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CREATED))
                 .verifyComplete();
 
-        verify(productRest, times(1)).addNewProduct(any(Product.class));
+        verify(productRest, times(1)).addNewProduct(any(ProductRequest.class));
     }
 
     @Test
@@ -91,9 +91,9 @@ public class ProductHandlerTest {
     public void getProducts_ShouldReturnOkStatus() {
         ServerRequest request = mock(ServerRequest.class);
 
-        ProductStockByFranchise mockResponse = new ProductStockByFranchise();
+        ProductsTopStockResponse mockResponse = new ProductsTopStockResponse();
         mockResponse.setProducts(List.of(
-                new ProductStock("Sucursal A", "Producto A", 10)
+                new ProductStockResponse("Sucursal A", "Producto A", 10)
         ));
 
         when(request.queryParam("franchiseId")).thenReturn(Optional.of("1"));
@@ -114,13 +114,13 @@ public class ProductHandlerTest {
                 .uri(URI.create(UPDATE_STOCK_PATH))
                 .body(Mono.just(productBranchRequest));
 
-        when(productRest.updateStock(any(ProductBranch.class))).thenReturn(Mono.just(new ProductBranch()));
+        when(productRest.updateStock(any(ProductBranchRequest.class))).thenReturn(Mono.empty());
 
         StepVerifier.create(productHandler.updateStockProduct(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.OK))
                 .verifyComplete();
 
-        verify(productRest, times(1)).updateStock(any(ProductBranch.class));
+        verify(productRest, times(1)).updateStock(any(ProductBranchRequest.class));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class ProductHandlerTest {
                 .uri(URI.create(ADD_PRODUCT_PATH))
                 .body(Mono.just(productRequest));
 
-        when(productRest.addNewProduct(any(Product.class))).thenReturn(Mono.error(new AlreadyExistsException("Product already exists")));
+        when(productRest.addNewProduct(any(ProductRequest.class))).thenReturn(Mono.error(new AlreadyExistsException("Product already exists")));
 
         StepVerifier.create(productHandler.addNewProduct(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CONFLICT))
@@ -165,7 +165,7 @@ public class ProductHandlerTest {
                 .uri(URI.create(UPDATE_STOCK_PATH))
                 .body(Mono.just(productBranchRequest));
 
-        when(productRest.updateStock(any(ProductBranch.class))).thenReturn(Mono.error(new RuntimeException("Error")));
+        when(productRest.updateStock(any(ProductBranchRequest.class))).thenReturn(Mono.error(new RuntimeException("Error")));
 
         StepVerifier.create(productHandler.updateStockProduct(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR))
@@ -179,7 +179,7 @@ public class ProductHandlerTest {
                 .uri(URI.create(UPDATE_STOCK_PATH))
                 .body(Mono.just(productBranchRequest));
 
-        when(productRest.updateStock(any(ProductBranch.class))).thenReturn(Mono.error(new NotFoundException("Not found exception")));
+        when(productRest.updateStock(any(ProductBranchRequest.class))).thenReturn(Mono.error(new NotFoundException("Not found exception")));
 
         StepVerifier.create(productHandler.updateStockProduct(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.NOT_FOUND))

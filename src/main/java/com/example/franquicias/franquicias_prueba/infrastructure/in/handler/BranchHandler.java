@@ -22,15 +22,8 @@ public class BranchHandler {
     private final IBranchRest branchRest;
 
     public Mono<ServerResponse> addBranch(ServerRequest serverRequest) {
-        Branch branch = new Branch();
         return serverRequest.bodyToMono(BranchRequest.class)
                 .switchIfEmpty(Mono.error(new InvalidDataException(BRANCH_INFO_REQUIRED)))
-                .map(branchRequest ->
-                    {
-                    branch.setName(branchRequest.getName());
-                    branch.setFranchiseId((long) branchRequest.getFranchiseId());
-                    return branch;
-                    })
                 .flatMap(branchRest::addBranch)
                 .then(ServerResponse.ok().build())
                 .onErrorResume(NotFoundException.class, ex ->

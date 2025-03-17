@@ -51,13 +51,13 @@ public class BranchHandlerTest {
                 .uri(URI.create(ADD_BRANCH_PATH))
                 .body(Mono.just(branchRequest));
 
-        when(branchRest.addBranch(any(Branch.class))).thenReturn(Mono.empty());
+        when(branchRest.addBranch(any(BranchRequest.class))).thenReturn(Mono.empty());
 
         StepVerifier.create(branchHandler.addBranch(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.OK))
                 .verifyComplete();
 
-        verify(branchRest, times(1)).addBranch(any(Branch.class));
+        verify(branchRest, times(1)).addBranch(any(BranchRequest.class));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class BranchHandlerTest {
                 .uri(URI.create(ADD_BRANCH_PATH))
                 .body(Mono.just(branchRequest));
 
-        when(branchRest.addBranch(any(Branch.class))).thenReturn(Mono.error(new AlreadyExistsException("Branch already exists")));
+        when(branchRest.addBranch(any(BranchRequest.class))).thenReturn(Mono.error(new AlreadyExistsException("Branch already exists")));
 
         StepVerifier.create(branchHandler.addBranch(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CONFLICT))
@@ -81,7 +81,7 @@ public class BranchHandlerTest {
                 .uri(URI.create(ADD_BRANCH_PATH))
                 .body(Mono.just(branchRequest));
 
-        when(branchRest.addBranch(any(Branch.class))).thenReturn(Mono.error(new NotFoundException("Branch already exists")));
+        when(branchRest.addBranch(any(BranchRequest.class))).thenReturn(Mono.error(new NotFoundException("Branch already exists")));
 
         StepVerifier.create(branchHandler.addBranch(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.NOT_FOUND))
@@ -107,7 +107,7 @@ public class BranchHandlerTest {
                 .uri(URI.create(ADD_BRANCH_PATH))
                 .body(Mono.just(branchRequest));
 
-        when(branchRest.addBranch(any(Branch.class))).thenReturn(Mono.error(new RuntimeException("Unexpected error")));
+        when(branchRest.addBranch(any(BranchRequest.class))).thenReturn(Mono.error(new RuntimeException("Unexpected error")));
 
         StepVerifier.create(branchHandler.addBranch(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR))

@@ -1,18 +1,18 @@
 variable "vpc_id" {
-  type        = string
+  type = string
 }
 
 variable "aws_region" {
-  type        = string
-  default     = "us-east-1"
+  type    = string
+  default = "us-east-1"
 }
 
 variable "subnet_ids" {
-  type        = list(string)
+  type = list(string)
 }
 
-variable "db_password"{
-    type = string
-    description = "Contraseña de la base de datos"
+variable "db_password" {
+  type        = string
+  description = "Contraseña de la base de datos"
 }
 

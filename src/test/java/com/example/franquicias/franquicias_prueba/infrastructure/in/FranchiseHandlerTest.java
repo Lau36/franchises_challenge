@@ -55,13 +55,13 @@ public class FranchiseHandlerTest {
                 .uri(URI.create(ADD_FRANCHISE_PATH))
                 .body(Mono.just(franchiseRequest));
 
-        when(franchiseRest.createFranchise(any(Franchise.class))).thenReturn(Mono.empty());
+        when(franchiseRest.createFranchise(any(FranchiseRequest.class))).thenReturn(Mono.empty());
 
         StepVerifier.create(franchiseHandler.createFranchise(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CREATED))
                 .verifyComplete();
 
-        verify(franchiseRest, times(1)).createFranchise(any(Franchise.class));
+        verify(franchiseRest, times(1)).createFranchise(any(FranchiseRequest.class));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class FranchiseHandlerTest {
                 .uri(URI.create(ADD_FRANCHISE_PATH))
                 .body(Mono.just(franchiseRequest));
 
-        when(franchiseRest.createFranchise(any(Franchise.class))).thenReturn(Mono.error(new AlreadyExistsException("Franchise already exists")));
+        when(franchiseRest.createFranchise(any(FranchiseRequest.class))).thenReturn(Mono.error(new AlreadyExistsException("Franchise already exists")));
 
         StepVerifier.create(franchiseHandler.createFranchise(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.CONFLICT))
@@ -99,7 +99,7 @@ public class FranchiseHandlerTest {
                 .uri(URI.create(ADD_FRANCHISE_PATH))
                 .body(Mono.just(franchiseRequest));
 
-        when(franchiseRest.createFranchise(any(Franchise.class))).thenReturn(Mono.error(new RuntimeException("Unexpected error")));
+        when(franchiseRest.createFranchise(any(FranchiseRequest.class))).thenReturn(Mono.error(new RuntimeException("Unexpected error")));
 
         StepVerifier.create(franchiseHandler.createFranchise(request))
                 .expectNextMatches(response -> response.statusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR))

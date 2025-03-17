@@ -29,18 +29,8 @@ public class ProductHandler {
     private final IProductRest productRest;
 
     public Mono<ServerResponse> addNewProduct(ServerRequest serverRequest) {
-        Product product = new Product();
-
         return serverRequest.bodyToMono(ProductRequest.class)
                 .switchIfEmpty(Mono.error(new InvalidDataException(PRODUCT_INFO_REQUIRED)))
-                .map(productRequest ->
-                        {
-                            product.setName(productRequest.getName());
-                            product.setBranchId((long) productRequest.getBranchId());
-                            product.setStock(productRequest.getStock());
-                            return product;
-                        }
-                        )
                 .flatMap(productRest::addNewProduct)
                 .then(ServerResponse.status(HttpStatus.CREATED).build())
                 .onErrorResume(NotFoundException.class, ex ->
@@ -83,20 +73,7 @@ public class ProductHandler {
                             () -> new InvalidDataException(FRANCHISE_ID_REQUIRED)
                     ));
 
-                    return productRest.getAllProductStockByFranchise(franchiseId)
-                            .map(products ->
-                                    ProductsTopStockResponse.builder()
-                                    .franchiseId(franchiseId)
-
-                                    .products(products.getProducts().stream().map(
-                                            productStockResponse ->
-                                                    ProductStockResponse.builder()
-                                                    .branchName(productStockResponse.getBranchName())
-                                            .name(productStockResponse.getName())
-                                                    .stock(productStockResponse.getStock())
-                                            .build()).toList()
-                                    )
-                                    .build());
+                    return productRest.getAllProductStockByFranchise(franchiseId);
                 })
                 .flatMap(response -> ServerResponse.ok().bodyValue(response))
                 .onErrorResume(NotFoundException.class, ex ->
@@ -111,19 +88,10 @@ public class ProductHandler {
     }
 
     public Mono<ServerResponse> updateStockProduct(ServerRequest serverRequest) {
-        ProductBranch product = new ProductBranch();
         return serverRequest.bodyToMono(ProductBranchRequest.class)
                 .switchIfEmpty(Mono.error(new InvalidDataException(PRODUCT_INFO_REQUIRED)))
-                .map(productRequest ->
-                        {
-                            product.setProductId(productRequest.getProductId());
-                            product.setBranchId(productRequest.getBranchId());
-                            product.setStock(productRequest.getStock());
-                            return product;
-                        }
-                )
                 .flatMap(productRest::updateStock)
-                .flatMap(response -> ServerResponse.ok().bodyValue(response))
+                .then(ServerResponse.ok().bodyValue(PRODUCT_STOCK_UPDATED))
                 .onErrorResume(NotFoundException.class, ex ->
                         ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(ex.getMessage()))
                 .onErrorResume(InvalidDataException.class, ex ->
